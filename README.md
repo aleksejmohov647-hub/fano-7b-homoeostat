@@ -3,6 +3,8 @@
 
 ## 1. System Invariant & Algebraic DNA
 The macro-state and boundary conditions of the system are governed by the non-dimensional relation in relative units (r.u.):
+### 5.0. Octonion Algebra Isomorphism
+The 7-bit spatial tensor `s[6:0]` is strictly isomorphic to the imaginary basis of split-octonion algebra ($e_1, e_2, e_3, e_4, e_5, e_6, e_7$). The cyclic parity equations implemented in `fano_check_7b` reproduce the non-associative octonion multiplication table geometrically, bypassing the need for look-up tables (LUTs) or multiplier arrays.
 
 $$
 \frac{01}{01} = \frac{7^n}{M} \pm \frac{1 \cdot m^4}{N^3}
