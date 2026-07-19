@@ -1,6 +1,6 @@
-#inc#include "predator_atom.h"
+#include "predator_atom.h"
 
-statstatic inline uint8_t fano_violations(uint8_t q) {
+static inline uint8_t fano_violations(uint8_t q) {
     const uint8_t b0 = (q >> 0) & 1U;
     const uint8_t b1 = (q >> 1) & 1U;
     const uint8_t b2 = (q >> 2) & 1U;
