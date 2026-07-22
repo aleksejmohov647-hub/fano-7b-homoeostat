@@ -1,0 +1,15 @@
+module fano_atom_7b_maximal (
+    input  wire [6:0] s,
+    input  wire [6:0] f,
+    output wire [6:0] s_next,
+    output wire [6:0] f_next
+);
+    wire p4;
+    wire [2:0] m;
+    assign p4 = (s[3]^f[4]) & (s[4]^f[3]);
+    assign m  = {s[3], s[4], s[3]^s[4]};
+    assign s_next[6:4] = s[6:4] ^ m;
+    assign s_next[3:0] = s[3:0];
+    assign s_next      = s_next ^ f;
+    assign f_next      = s ^ (f & {7{p4}});
+endmodule
