@@ -1,0 +1,116 @@
+(* optimize_power = "TRUE", retiming = "TRUE" *)
+module fractal_core_polyrhythmic_7_8 (
+    input  logic       clk,
+    input  logic       rst_n,
+    output logic [7:0] psi,          // 7 бит структуры + 1 бит люфта эверсии
+    output logic       mode,         // Общий темп макросистемы
+    output logic       is_eversion   // Флаг макро-эверсии системы
+);
+
+    localparam int ROTATION_BITS = 3;
+
+    logic [6:0] R [0:7];
+    logic [2:0] step_q;
+    logic       mode_r;
+    logic       is_eversion_r;
+
+    // --- 1. ТОПОЛОГИЧЕСКИЕ ИНДИКАТОРЫ РИТМОВ (Отношения 1/3 и 1/4) ---
+    // Негэнтропия (Ритм 3): ровно одна единица в старшей триаде R[0][6:4]
+    logic negentropy_1_3;
+    assign negentropy_1_3 = (R[0][6:4] == 3'b001) ||
+                            (R[0][6:4] == 3'b010) ||
+                            (R[0][6:4] == 3'b100);
+
+    // Энтропия (Ритм 4): ровно одна единица в младшей тетраде R[0][3:0]
+    logic entropy_1_4;
+    assign entropy_1_4 = (R[0][3:0] == 4'b0001) ||
+                         (R[0][3:0] == 4'b0010) ||
+                         (R[0][3:0] == 4'b0100) ||
+                         (R[0][3:0] == 4'b1000);
+
+    // Уравнение уравнений: баланс сил, управляющий знаком маски выворота
+    logic [6:0] dynamic_J_mask;
+    assign dynamic_J_mask = (entropy_1_4 ^ negentropy_1_3) ? 7'b1100000 : 7'b0011111;
+
+    // --- 2. ВНУТРЕННИЙ ДВИЖОК: АТОМ ФАНО С МАКСИМАЛЬНОЙ ДИФФУЗИЕЙ (Ритм 6) ---
+    logic [6:0] atom_s_next;
+    logic [6:0] atom_f_next;
+    
+    // Строгое восстановление твоей побитовой геометрии атома fano_atom_7b_maximal
+    always_comb begin
+        logic p4;
+        logic [2:0] m;
+        
+        // Перекрёстная ортогональность осей 3 и 4 между Вихрем (R[3]) и Весами (R[5])
+        p4 = (R[3][3] ^ R[5][4]) & (R[3][4] ^ R[5][3]);
+        m  = {R[3][3], R[3][4], R[3][3] ^ R[3][4]};
+        
+        atom_s_next[6:4] = R[3][6:4] ^ m;
+        atom_s_next[3:0] = R[3][3:0];
+        atom_s_next      = atom_s_next ^ R[5]; // Наложение потока
+        atom_f_next      = R[3] ^ (R[5] & {7{p4}});
+    end
+
+    // Автоморфизмы Фано базовых слоёв (Ритмы 1, 2, 7)
+    logic [6:0] fano_from_R1;
+    logic [6:0] fano_from_R5;
+    assign fano_from_R1 = {R[1][5], R[1][3], R[1][1], R[1][6], R[1][4], R[1][2], R[1][0]};
+    assign fano_from_R5 = {R[5][5], R[5][3], R[5][1], R[5][6], R[5][4], R[5][2], R[5][0]};
+
+    // --- 3. ПОЛИРИТМИЧЕСКИЙ АППАРАТ ВРЕМЕНИ И СОСТОЯНИЙ ---
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            for (int i = 0; i < 8; i++) R[i] <= 7'd0;
+            R[0]          <= 7'd7;      // Исходная Линия 0 (3 единицы — Ритм 3 старта)
+            step_q        <= 3'd0;
+            mode_r        <= 1'b0;
+            is_eversion_r <= 1'b0;
+        end else begin
+            logic was_step_7 = (step_q == 3'd7);
+            
+            // ИСТИННАЯ ПОЛИРИТМИЯ ВРЕМЕНИ:
+            // Скорость течения фаз модулируется балансом 1/3 и 1/4. 
+            // Счетчик прыгает через пространство-время, убирая лишние такты
+            if (step_q == 3'd7)
+                step_q <= 3'd0;
+            else
+                step_q <= step_q + (negentropy_1_3 ? 3'd3 : (entropy_1_4 ? 3'd4 : 3'd1));
+
+            is_eversion_r <= was_step_7;
+
+            case (step_q)
+                // --- СЕГМЕНТ ЯДРА №3 (ВИХРЬ / НЕГЭНТРОПИЯ) ---
+                3'd0: R[1] <= R[0] ^ 7'd1;                 // Ритм 1: Биение единицы
+                3'd1: R[2] <= fano_from_R1;              // Ритм 2: Перестановка Фано
+                3'd2: R[3] <= R[2] ^ dynamic_J_mask;     // Ритм 3: Выворот знака
+
+                // --- ШЛЮЗ ПЕРЕХОДА (Атом Максимальных Отношений) ---
+                3'd3: begin
+                    // Оператор градуса °: если негэнтропия 1/3 активна — пространственный поворот
+                    if (negentropy_1_3)
+                        R[4] <= {R[3][ROTATION_BITS-1:0], R[3][6:ROTATION_BITS]};
+                    else
+                        R[4] <= atom_s_next;               // Иначе — сквозной проброс структуры атома
+                end
+
+                3'd4: begin
+                    // Ритм 5: Расчёт темпа через свертку
+                    R[5]   <= atom_f_next;               // Инжекция трансформированного потока в Весы
+                    mode_r <= ^atom_s_next;              // Перевод тетрады в тернарный темп
+                end
+
+                // --- СЕГМЕНТ ЯДРА №4 (ВЕСЫ / ЭНТРОПИЯ) ---
+                3'd5: R[6] <= fano_from_R5 ^ dynamic_J_mask; // Ритм 6: Конформный шаг Весов
+                3'd6: R[7] <= R[6];                          // Ритм 7: Семимерное удержание
+                3'd7: R[0] <= R[7] ^ dynamic_J_mask;         // Макро-эверсия: онтологическое замыкание
+                default: ;
+            endcase
+        end
+    end
+
+    // Выходной интерфейс: онтологическое замыкание в точке люфта
+    assign psi         = is_eversion_r ? {1'b1, (R[7] ^ dynamic_J_mask)} : {1'b0, R[0]};
+    assign mode        = mode_r;
+    assign is_eversion = is_eversion_r;
+
+endmodule
