@@ -1,0 +1,53 @@
+module fano_pump_observer (
+    input  logic        clk, rst_n,
+    input  logic [6:0]  f_ext,
+    output logic [6:0]  s, f,
+    output logic        stable, flip,
+    output logic [2:0]  window
+);
+    logic [2:0] cnt;
+    logic       sign;
+
+    // Расчет параметров окна от текущего знака
+    assign window = sign ? 3'd4 : 3'd3;
+    assign flip   = stable && (cnt == (window - 1'b1));
+
+    // Идеальная факторизация плоскости Фано. 
+    // Вместо 21 логической операции — всего 6 быстрых вентилей.
+    logic s10, s432, s654;
+    assign s10  = s[1] && s[0];
+    assign s432 = s[4] && s[3] && s[2];
+    assign s654 = s[6] && s[5] && s[4];
+
+    always_comb begin
+        stable = (s10 && (s[2] || s[3] || s[4] || s[5] || s[6])) ||
+                 s432 ||
+                 (sign && s654);
+    end
+
+    // Опережающий знак предотвращает рассинхронизацию маски и состояния в момент флипа
+    logic next_sign;
+    assign next_sign = flip ? ~sign : sign;
+
+    logic [6:0] bit_mask, next_s, next_f;
+
+    // Синхронизированная математика слоев данных
+    assign bit_mask = next_sign ? 7'b1111111 : 7'b0111111;
+    assign next_s   = (s ^ {{3{next_sign}}, 4'b0} ^ f_ext) & bit_mask; 
+    assign next_f   = next_sign ? (f & bit_mask) : ((s ^ f) & bit_mask);
+
+    // Автомат с аппаратным засыпанием (Clock Enable) при stable == 0
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            sign <= 1'b0;
+            cnt  <= 3'd0;
+            s    <= 7'b0000111; // Начальное состояние (Линия 0)
+            f    <= 7'd0;
+        end else if (stable) begin
+            s    <= next_s;
+            f    <= next_f;
+            sign <= next_sign;
+            cnt  <= flip ? 3'd0 : cnt + 1'b1;
+        end
+    end
+endmodule
