@@ -1,0 +1,45 @@
+#include <stdint.h>
+
+typedef struct {
+    uint8_t state; 
+} holon_7b_full_t;
+
+static inline uint8_t popcount_7(uint8_t x) {
+    x &= 0x7F;
+#if defined(__GNUC__) || defined(__clang__)
+    return (uint8_t)__builtin_popcount(x);
+#elif defined(_MSC_VER)
+    return (uint8_t)__popcnt(x);
+#else
+    x = (x & 0x55) + ((x >> 1) & 0x55);
+    x = (x & 0x33) + ((x >> 2) & 0x33);
+    return (x & 0x0F) + ((x >> 4) & 0x0F);
+#endif
+}
+
+static inline void holon_step_7b_full(holon_7b_full_t *h, uint8_t f_ext) {
+    const uint8_t MASK = 0x2D;
+
+    uint8_t s = h->state & 0x7F;
+    uint8_t stable = (h->state >> 7) & 1;
+
+    uint8_t s_auto = (((s << 1) & 0x7F) | (s >> 6)) ^ MASK;
+    uint8_t f = (((s_auto << 1) & 0x7F) | (s_auto >> 6));
+
+    f = (f ^ f_ext) & 0x7F;
+
+    const uint8_t mask_compact = stable ? 0xFF : 0x00;
+    const uint8_t mask_maximal = ~mask_compact;
+
+    uint8_t s_next_comp = s_auto;
+    uint8_t s_next_max = s_auto ^ f;
+
+    uint8_t s_next = (s_next_comp & mask_compact) | (s_next_max & mask_maximal);
+    s_next &= 0x7F;
+
+    uint8_t diff = s_next ^ f;
+    uint8_t ham = popcount_7(diff);
+    uint8_t next_stable = (ham < 4) ? 1 : 0;
+
+    h->state = (next_stable << 7) | s_next;
+}
