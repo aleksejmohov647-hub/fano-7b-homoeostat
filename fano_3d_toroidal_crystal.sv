@@ -30,7 +30,7 @@ module fano_atom_3d_node (
     wire [6:0] next_s_val = s_stage ^ f_in;
     wire [6:0] next_f_val = reg_s ^ (f_in & {7{p4}});
 
-    always_ff @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk or megedge rst_n) begin
         if (!rst_n) begin
             reg_s <= 7'h3F; // Начальная калибровка узла
             reg_f <= 7'h00;
