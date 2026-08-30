@@ -4,8 +4,10 @@ An alternative hardware computing paradigm implementing topological compression 
 
 ## 🚀 Core Architecture in 3 Points
 
-1. **Topological Bifurcation:** The hardware uses prohibited projective plane orders (6 and 10) as boundary layers. Mutual defect compensation allows the virtual assembly of a stable 12th-order projective geometry ($PG(2, \mathbb{F}_{12})$) via direct sum:
-   $$111_{\text{order 10}} + 43_{\text{order 6}} + 3_{\text{order 1}} = 157 \text{ nodes}$$
+1. **Topological Bifurcation:** The hardware uses prohibited projective plane orders (6 and 10) as boundary layers. Mutual defect compensation allows the virtual assembly of a stable 12th-order projective geometry $PG(2, \mathbb{F}_{12})$ via direct sum:
+
+$$111_{\text{order 10}} + 43_{\text{order 6}} + 3_{\text{order 1}} = 157 \text{ nodes}$$
+
 2. **Instant Collapse:** A global Gram matrix of rank 157 instantly reduces to rank 1 ($\mathbf{\hat{G}} \equiv \mathbf{\hat{J}}$) upon reduction modulo 2. This functions as a hardware-level equivalent of Ricci flows, executing operations in exactly **1 clock cycle** without linear addressing, memory buses, or ALUs.
 3. **Scale Eversion (Time):** Time acts as a multi-scale shift operator operating across three distinct layers:
    - **Micro:** $\mathbb{F}_2$ Boolean inversions.
@@ -16,7 +18,8 @@ An alternative hardware computing paradigm implementing topological compression 
 
 - **Space Topology:** Cyclic ring $\mathbb{Z}_{157}$ resolved via non-associative Moufang loops.
 - **System Frequency:** $T(1260)$ mapped to ancient 360-degree calendar symmetries:
-  $$360 = 144_{\text{direct}} + 144_{\text{invert}} + 54_{\text{entropy}} + 18_{\text{triad}}$$
+
+$$360 = 144_{\text{direct}} + 144_{\text{invert}} + 54_{\text{entropy}} + 18_{\text{triad}}$$
 
 ## 🏛️ Repository Structure
 
@@ -27,4 +30,4 @@ An alternative hardware computing paradigm implementing topological compression 
 - `fano_agi_weights_orchestrator.md` — Hybrid AGI multi-scale weight orchestration manifest.
 
 ---
-*Formulated and hardcoded by [tot33/ Mokhov] (c) 2026. Licensed under GNU GPL v3.*
+*Formulated and hardcoded by Mokhov (c) 2026. Licensed under GNU GPL v3.*
