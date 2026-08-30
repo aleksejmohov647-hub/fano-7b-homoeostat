@@ -1,8 +1,28 @@
+import numpy as np
+from typing import Tuple, Dict, Any
+
+class AutomorphicHypercubeEngine:
+    def __init__(self):
+        # Стартовый базис разностного множества (v=157, k=13, lambda=1)
+        self.D = [0, 1, 3, 13, 32, 36, 43, 64, 71, 91, 111, 135, 152]
+
+    def sgn_chi(self, perm: list) -> int:
+        """Вычисление знака перестановки 7-битного октонионного базиса Фано."""
+        n = len(perm)
+        p = list(perm)
+        inv = 0
+        for i in range(n):
+            for j in range(i + 1, n):
+                if p[i] > p[j]:
+                    inv += 1
+        return 1 if inv % 2 == 0 else -1
+
     def analyze_node(self, coord: Tuple[int, int, int] = (8, 8, 8)) -> Dict[str, Any]:
         # Расчет параметров базового слоя с инжекцией дефекта порядка N(6)=43
         A = np.zeros((157, 157), dtype=np.int32)
         for r in range(157): 
-            A[r, (self.D + r) % 157] = 1
+            for shift in self.D:
+                A[r, (shift + r) % 157] = 1
         
         # Инжектируем деформацию шкалы (динамическая точка бифуркации)
         A[43, 111] ^= 1 
@@ -13,7 +33,6 @@
         deg = int(np.sum(np.abs(W)))
         
         eg = np.linalg.eigvals(A)
-        # Сортируем по убыванию модулей
         eg_sorted = np.sort(np.abs(eg))[::-1]
         r_max = float(eg_sorted[1]) # Второе по величине собственное число
         
@@ -34,7 +53,12 @@
         
         return {
             "XYZ_Meso_Defects": tuple(degs),
-            "Meso_Intensities": tuple(intensities), # Теперь тут живые вещественные коэффициенты накачки
+            "Meso_Intensities": tuple(intensities),
             "Active_Hecke_3D_Tensor": f"T({n_vector[0]}, {n_vector[1]}, {n_vector[2]})",
             "System_Status": "STABLE_FLOW" if macro_seven == 7 and a7_ok else "STALL"
         }
+
+if __name__ == "__main__":
+    engine = AutomorphicHypercubeEngine()
+    result = engine.analyze_node((8, 8, 8))
+    print(result)
