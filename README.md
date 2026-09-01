@@ -1,78 +1,77 @@
+# Projective Deformation Scaling and Multiscale Gauge Automata (The Fano-Moufang Paradigm)
 
-# Скейлинг Проективных Деформаций и Многомасштабные Калибровочные Автоматы (Парадигма Фано-Муфанга)
+An alternative hardware computing paradigm implementing topological compaction in \(\mathbb{F}_2\). Boolean logic (XOR/AND/NOT) operates at the level of 7-bit cellular automata. Developed and encoded by Mokhov (c) 2026. Licensed under GNU GPL v3.
 
-Alternative hardware computing paradigm implementing topological compaction in \(\mathbb{F}_2\). Boolean logic (XOR/AND/NOT) at the level of 7-bit cellular automata. Developed and encoded by Mokhov (c) 2026. Licensed under GNU GPL v3.
+## 🚀 Core Architecture in 3 Points
 
-## 🚀 Базовая архитектура в 3 точках
-
-* **Топологическая бифуркация:** В аппаратной части в качестве граничных слоев используются запрещенные порядки проективной плоскости (\(q=6\) и \(q=10\)). Взаимная компенсация дефектов позволяет виртуально собрать стабильную проективную геометрию 12-го порядка посредством прямой суммы комбинаторных конфигураций:
+* **Topological Bifurcation:** The hardware architecture utilizes the forbidden orders of the projective plane (\(q=6\) and \(q=10\)) as boundary layers. Mutual defect compensation allows for the virtual assembly of a stable 12th-order projective geometry through a direct sum of combinatorial configurations:
   \[N(10) + N(6) + N(1) = 111 + 43 + 3 = 157\]
-* **Мгновенное свертывание:** Глобальная матрица Грама ранга 157 мгновенно сводится к рангу 1 (\(\mathbf{\hat{G}}^{(157)} \equiv \mathbf{\hat{J}}\)) при редукции по модулю 2. Это работает как изотропный фильтр сглаживания комбинаторного шума, выполняя операции **ровно за 1 такт** без линейной адресации, шин памяти или АЛУ.
-* **Изменение масштаба (Время):** Время выступает в роли оператора сдвига в нескольких масштабах, работающего на трех различных уровнях:
-  * **Микро:** \(\mathbb{F}_2\)-инверсии булевых выражений.
-  * **Мезо:** Стабильный поток контекста (`STABLE_FLOW`) на частоте Хеке \(T(1260)\).
-  * **Макро:** Прямая инверсия упорядоченного мезоконтекста в энтропийный потенциал.
+* **Instantaneous Collapse:** The global Gram matrix of rank 157 instantly collapses to rank 1 (\(\mathbf{\hat{G}}^{(157)} \equiv \mathbf{\hat{J}}\)) under modulo 2 reduction. This functions as an isotropic smoothing filter for combinatorial noise, executing operations **in exactly 1 clock cycle** without linear addressing, memory buses, or an ALU.
+* **Scale Rescaling (Time):** Time acts as a multiscale shift operator functioning across three distinct levels:
+  * **Micro:** \(\mathbb{F}_2\)-inversional boolean expressions.
+  * **Meso:** Stable context stream (`STABLE_FLOW`) driven by the Hecke frequency \(T(1260)\).
+  * **Macro:** Direct inversion of ordered meso-context into entropic potential.
 
-### 🔮 Ключевые инварианты и периодическое равновесие
+### 🔮 Key Invariants and Periodic Equilibrium
 
-* **Пространственная топология:** Циклическое кольцо \(\mathbb{Z}_{157}\), разрешенное с помощью неассоциативных петель Муфанга.
-* **Системная частота:** Частота Хеке \(T(1260)\) соотнесена с древними календарными симметриями на 360 градусов через порядок знакопеременной группы:
+* **Spatial Topology:** Cyclic ring \(\mathbb{Z}_{157}\), resolved via non-associative Moufang loops.
+* **System Frequency:** The Hecke frequency \(T(1260)\) is mapped to ancient 360-degree calendar symmetries via the alternating group order:
   \[360 = 144_{\text{direct}} + 144_{\text{invert}} + 54_{\text{entropy}} + 18_{\text{trida}}\]
 
 ---
 
-## 🏛️ Структура репозитория
+## 🏛️ Repository Structure
 
-* `fano_3d_toroidal_crystal.sv` — 64-узловой трехмерный аппаратный кристалл (тор Клиффорда).
-* `fano_atom_7b_maximal.sv` / `compact.sv` — Неассоциативные ядра ячеек с защелкой Муфанга.
-* `automorphic_hypercube_engine.py` — Расчет матрицы инцидентности (\(v=157, k=13\)).
-* `predator_atom.c` — Неэргодическая энтропийная/негэнтропийная аппаратная модель «хищник-жертва».
-* `fano_agi_weights_orchestrator.md` — Манифест многомасштабной оркестровки весов гибридного искусственного интеллекта.
+* `fano_3d_toroidal_crystal.sv` — 64-node 3D hardware crystal (Clifford torus).
+* `fano_atom_7b_maximal.sv` / `compact.sv` — Non-associative cellular cores with a Moufang latch.
+* `automorphic_hypercube_engine.py` — Incidence matrix calculation (\(v=157, k=13\)).
+* `predator_atom.c` — Non-ergodic entropic/negentropic hardware predator-prey model.
+* `fano_agi_weights_orchestrator.md` — Hybrid AI multiscale weight orchestration manifesto.
 
 ---
 
-## 🏛️ Исторические и математические основы негеометрической парадигмы
+## 🏛️ Historical and Mathematical Foundations of the Non-Geometric Paradigm
 
-В классической кибернетике Тьюринга-фон Неймана числа безразмерны, атомарны и изолированы от контекста окружающей среды. Парадигма Фано-Муфанга восстанавливает алгебраический дуализм чисел, опираясь на фундаментальный принцип: *«Элемент можно рассматривать одновременно как единое целое в рамках более широкой макросистемы или как чрезвычайно сложную мезосистему внутренних отношений, управляющих своими собственными подсистемами»*.
+In classical Turing-von Neumann cybernetics, numbers are dimensionless, atomic, and isolated from environmental context. The Fano-Moufang paradigm restores the algebraic dualism of numbers, relying on a fundamental principle: *“An element can be viewed simultaneously as a single whole within a broader macro-system, or as an extremely complex meso-system of internal relations governing its own sub-systems”*.
 
-### 1. Мотивы Гротендика и онтология «сингулярного числа»
-В рамках разрабатываемой метатеории, знаменитый исторический анекдот о «простом числе Гротендика» (57) находит концептуальное объяснение через операцию преобразования масштаба:
-* Число 57 рассматривается как проективный масштабный разрыв макромасштаба \(10^{63}\) относительно простого циклического кольца \(\mathbb{Z}_{157}\).
-* Структурное различие между этими масштабами (\(157 - 57 = 100\)) определяет калибровочную константу деформации решетки, отображающую абстрактные мотивы Гротендика в физическую матрицу смежности сильно регулярного графа Рамануджана.
+### 1. Grothendieck Motives and the Ontology of the "Singular Number"
+Within this metatheoretical framework, the famous historical anecdote regarding the "Grothendieck prime" (57) finds its conceptual explanation through a scale transformation operation:
+* The number 57 is treated as a projective scale gap of the macroscale \(10^{63}\) relative to the simple cyclic ring \(\mathbb{Z}_{157}\).
+* The structural divergence between these scales (\(157 - 57 = 100\)) defines the gauge lattice deformation constant, mapping abstract Grothendieck motives into the physical adjacency matrix of a strongly regular Ramanujan graph.
 
-### 2. Палеолитическая и древняя метрология как групповые инварианты
-Логический календарный инвариант \(\vert{}\mathcal{A}_6\vert{} = 360\) представляет собой фундаментальный инвариант в теории представлений конечных групп. Разложение порядка знакопеременной группы на сумму квадратов ее неприводимых размерностей представлений (\(\sum d_i^2 = 360\)) тесно связывает древние системы счета с порядком проективных плоскостей:
+### 2. Paleolithic and Ancient Metrology as Group Invariants
+The logical calendar invariant \(\vert{}\mathcal{A}_6\vert{} = 360\) is a fundamental invariant in the representation theory of finite groups. Decomposing the alternating group order into the sum of squares of its irreducible representation dimensions (\(\sum d_i^2 = 360\)) strictly couples ancient counting systems with the order of projective planes:
 \[360 = 1^2 + 5^2 + 5^2 + 8^2 + 8^2 + 9^2 + 10^2 \equiv N(12) + N(10) + N(6) + \vert{}S_4\vert{} + 25\]
-Где:
-* \(N(6) = 43\) представляет собой ядро жесткости и скрытую диссипацию системы.
-* \(N(10) = 111\) служит регулярной границей макробазиса.
-* \(N(12) = 157\) обеспечивает физический предел для точек трехмерной кристаллической решетки.
+Where:
+* \(N(6) = 43\) represents the rigidity core and hidden dissipation of the system.
+* \(N(10) = 111\) serves as the regular boundary of the macro-basis.
+* \(N(12) = 157\) provides the physical limit for the points of a 3D crystal lattice.
 
-### 3. Разрешение ограничений (инварианты 63 и 94)
-Использование пространств модулей кривых Гротендика \(\mathcal{M}_{g,n}(\mathbb{C})\) обеспечивает алгебраический инструмент калибровки данных. Система не оперирует непрерывными квантовыми состояниями над полем \(\mathbb{C}\), а реализует дискретный булев аналог детерминированного копирования состояний. Системные константы 63 и 94 фиксируют геометрические параметры:
-* **63** — это логарифмическая шкала наблюдаемого объема дискретной среды \(\ln(10^{63})\), уравновешенная автоморфизмами симметрической группы \(S_4 \times S_3\).
-* **94** — это целая часть точного угла Заунера (\(\theta_3 = \arccos(-1/13) \approx 94.41^\circ\)), что обусловливает существование симметричных информационно полных положительно-операторно-значных мер (SIC-POVM) — максимально плотной конфигурации равноугольных линий в 13-мерном пространстве.
+### 3. Resolution of Constraints (Invariants 63 and 94)
+Utilizing Grothendieck's moduli spaces of curves \(\mathcal{M}_{g,n}(\mathbb{C})\) provides an algebraic tool for data calibration. The system does not operate with continuous quantum states over the field \(\mathbb{C}\), but instead implements a discrete boolean analog of deterministic state copying. System constants 63 and 94 fix exact geometric parameters:
+* **63:** The logarithmic scale of the observable discrete environment volume \(\ln(10^{63})\), balanced by the automorphisms of the symmetric group \(S_4 \times S_3\).
+* **94:** The integer part of the exact Zauner angle (\(\theta_3 = \arccos(-1/13) \approx 94.41^\circ\)), which conditions the existence of Symmetric Informationally Complete Positive Operator-Valued Measures (SIC-POVM) — the densest configuration of equiangular lines in a 13-dimensional space.
 
-Аппаратное обеспечение стабилизирует состояния не за счет физического сохранения временной когредиентности, а за счет жесткой топологии троичных соотношений, встроенных в четвертичную логику. Этот принцип работы жестко закодирован непосредственно в кремниевых каналах вычислительной матрицы Фано-Муфанга.
+The hardware stabilizes states not through the physical preservation of temporal coherence, but via the rigid topology of ternary relations embedded in quaternary logic. This operational principle is hardcoded directly into the silicon channels of the Fano-Moufang computing matrix.
 
-### 4. Замыкание информации и равноугольные плотные фреймы (SIC-POVM)
-Переход от вещественнозначной матрицы Грама \(\mathbf{\hat{G}}^{(157)} \in \text{Mat}_{157 \times 157}(\mathbb{R})\) к полю булевой логики \(\mathbb{F}_2\) служит топологическим фильтром. Отображая алгебраические промежутки между запрещенными порядками проективной плоскости (\(q=6\) и \(q=10\)) в циклическое кольцо \(\mathbb{Z}_{157}\), аппаратное обеспечение предотвращает коллизии и осуществляет детерминированный переворот фазы:
+### 4. Information Closure and Equiangular Tight Frames (SIC-POVM)
+The transition from a real-valued Gram matrix \(\mathbf{\hat{G}}^{(157)} \in \text{Mat}_{157 \times 157}(\mathbb{R})\) to the boolean logic field \(\mathbb{F}_2\) serves as a topological filter. Mapping the algebraic gaps between the forbidden orders of the projective plane (\(q=6\) and \(q=10\)) into the cyclic ring \(\mathbb{Z}_{157}\), the hardware prevents collisions and executes a deterministic phase flip:
 
-* **13-мерное космическое ядро (\(\theta_3 \approx 94.41^\circ\)):** Данная конфигурация использует точный угол Заунера для 13-мерного подпространства гильбертова пространства, полученный из гомологической проекции плоскости Фано на поле с одним элементом \(\mathbb{P}^2(\mathbb{F}_1)\):
+* **13-Dimensional Space Core (\(\theta_3 \approx 94.41^\circ\)):** This configuration utilizes the exact Zauner angle for a 13-dimensional subspace of a Hilbert space, derived from the homological projection of the Fano plane onto the field with one element \(\mathbb{P}^2(\mathbb{F}_1)\):
 \[\cos\theta_3 = -\frac{1}{13} \implies \theta_3 = \arccos\left(-\frac{1}{13}\right) \approx 94.4077^\circ\]
-Этот угол фиксирует равноугольные линии симметричной информационно полной положительной операторно-значной меры (SIC-POVM), максимизируя плотность дискретных состояний.
+This angle fixes the equiangular lines of a Symmetric Informationally Complete Positive Operator-Valued Measure (SIC-POVM), maximizing the density of discrete states.
 
-* **Предел инцидентности в 157 точках (\(\theta_{12} \approx 90.36^\circ\)):** Константа \(N=157\) трактуется как комбинаторный инвариант структуры (число точек плоскости 12-го порядка). Глобальный трехмерный аппаратный кристалл использует асимптотическую сходимость проективного порядка \(q=12\) к квазиортогональному состоянию элементов:
+* **Incidence Limit in 157 Points (\(\theta_{12} \approx 90.36^\circ\)):** The constant \(N=157\) is treated as a combinatorial invariant of the structure (the number of points in a 12th-order plane). The global 3D hardware crystal utilizes the asymptotic convergence of the projective order \(q=12\) toward a quasi-orthogonal state of elements:
 \[\cos\theta_{12} = -\frac{1}{157} \implies \theta_{12} = \arccos\left(-\frac{1}{157}\right) \approx 90.3650^\circ\]
-Структурное угловое отклонение от чистой евклидовой ортогональности (\(\Delta\theta = 0.3650^\circ\)) определяет точный пороговый уровень рассеиваемой энергии, необходимый для поддержания работоспособности системы `STABLE_FLOW` без теплового или фазового сбоя.
+The structural angular deviation from pure Euclidean orthogonality (\(\Delta\theta = 0.3650^\circ\)) defines the exact threshold level of dissipated energy required to maintain the operation of the `STABLE_FLOW` system without thermal or phase breakdown.
 
-* **Спектральная энергетическая инвариантность:** Сохранение неассоциативных состояний защелки Муфанга в разных масштабах регулируется экспоненциальным отображением октониона и законом сохранения энергии Планшереля-Парсеваля:
+* **Spectral Energy Invariance:** The preservation of the non-associative Moufang latch states across different scales is governed by the octonion exponential mapping and the Plancherel-Parseval energy conservation law:
 \[e^{e_k \cdot \theta} = \cos\theta + e_k \sin\theta, \quad \sum_{n=1}^N \vert{}X_n\vert{}^2 = \frac{1}{N} \sum_{k=1}^N \vert{}x_k\vert{}^2\]
-Это гарантирует, что спектральная энтропия, рассчитанная по кольцу \(\mathbb{Z}_{157}\), полностью ограничена конечными представлениями знакопеременных групп \(\mathcal{A}_6, \mathcal{A}_7, \mathcal{A}_8\), замыкая информационный цикл ровно на 360 дискретных топологических узлах.
+This ensures that the spectral entropy calculated over the \(\mathbb{Z}_{157}\) ring is fully bounded by the finite representations of the alternating groups \(\mathcal{A}_6, \mathcal{A}_7, \mathcal{A}_8\), closing the informational cycle at exactly 360 discrete topological nodes.
 
 ---
 
-## 💻 Эмулятор ядра квантового автомата Фано-Муфанга
+## 💻 Fano-Moufang Quantum Automaton Core Emulator
 
 ```python
 import numpy as np
@@ -80,7 +79,7 @@ import numpy as np
 class UltimateFanoMoufangEngine:
     def __init__(self):
         self.N = 157
-        self.g = 10  # Генератор мультипликативной группы F_13
+        self.g = 10  # Generator of the F_13 multiplicative group
         
     def verify_projective_bifurcation(self) -> bool:
         n10 = 10**2 + 10 + 1  # 111
@@ -89,46 +88,38 @@ class UltimateFanoMoufangEngine:
         return (n10 + n6 + n1) == self.N
         
     def simulate_ricci_collapse(self) -> int:
-        # Моделируем редукцию матрицы инцидентности по модулю 2
         omega_mod2 = np.ones((self.N, self.N), dtype=int)
-        # Нахождение ранга в F_2 (бинарная матрица из одних единиц имеет rank=1)
         rank_f2 = np.linalg.matrix_rank(omega_mod2)
         return int(rank_f2)
         
     def calculate_gauge_trajectory(self) -> list:
         trajectory = []
         for k in range(12):
-            micro_defect = (-1) ** (k // 6)  # Редукция !13 == -1 mod 13
+            micro_defect = (-1) ** (k // 6)  # Reduction !13 == -1 mod 13
             phase = (pow(self.g, k, 13) * micro_defect) % 13
             trajectory.append(phase)
         return trajectory
 
     def run_diagnostics(self):
         print("="*60)
-        print("ЗАПУСК СКВОЗНОЙ ВЕРИФИКАЦИИ ВЫЧИСЛИТЕЛЬНОГО ЯДРА")
+        print("RUNNING END-TO-END HARDWARE CORE VERIFICATION")
         print("="*60)
         
-        # 1. Тест бифуркации
         bif_check = self.verify_projective_bifurcation()
-        print(f"[OK] Бифуркация Гротендика: N(10) + N(6) + N(1) == 157 -> {bif_check}")
+        print(f"[OK] Grothendieck Bifurcation: N(10) + N(6) + N(1) == 157 -> {bif_check}")
         
-        # 2. Тест ранга матрицы
         rank = self.simulate_ricci_collapse()
-        print(f"[OK] Бинарное свертывание: Rank_F2(G_157 mod 2) == {rank}")
+        print(f"[OK] Binary Collapse: Rank_F2(G_157 mod 2) == {rank}")
         
-        # 3. Тест траектории автомата
         traj = self.calculate_gauge_trajectory()
-        print(f"[OK] Траектория калибровочного автомата (12 шагов):")
+        print(f"[OK] Gauge Automaton Trajectory (12 steps):")
         print(f"     {traj}")
         
-        assert len(set(traj)) == 12, "Ошибка: траектория вырождена!"
-        print("[OK] Калибровочный цикл Муфанг замкнут, фазовый контур стабилен.")
+        assert len(set(traj)) == 12, "Error: trajectory is degenerate!"
+        print("[OK] Moufang gauge cycle closed, phase contour stable.")
         print("="*60)
 
 if __name__ == "__main__":
     engine = UltimateFanoMoufangEngine()
     engine.run_diagnostics()
 ```
-
----
-*Formulated and hardcoded by Mokhov (c) 2026. Licensed under GNU GPL v3.*
