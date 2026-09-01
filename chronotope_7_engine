@@ -3,7 +3,7 @@ module chronotope_7_engine (
     input  logic       rst_n,
     input  logic       step,
     output logic [2:0] state,
-    output logic [1:0] rule,
+    output logic [2:0] phase_step,      // Расширен до 3 бит для честного счета до 7
     output logic [1:0] macro_level,
     output logic       is_inversion,
     output logic       is_enversion,
@@ -13,28 +13,36 @@ module chronotope_7_engine (
 
     logic [2:0] next_state;
 
+    // Базовые переходы хронотопа
     assign next_state[0] = state[2];
     assign next_state[1] = state[0];
     assign next_state[2] = state[1] ^ state[0];
 
+    // Защита от Deadlock: если state падает в 000, принудительно инжектируем негэнтропийную единицу 3'b001
+    logic [2:0] safe_next_state;
+    assign safe_next_state = (state == 3'b000) ? 3'b001 : next_state;
+
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state       <= 3'b001;
-            rule        <= 2'd0;
+            phase_step  <= 3'b000;
             macro_level <= 2'd1;
         end else if (step) begin
-            state <= next_state;
-            if (rule == 2'd3) begin
-                rule <= 2'd0;
+            state <= safe_next_state;
+            
+            // Синхронизация: макроуровень совершает кувырок строго на 7-й фазе хронотопа (период ПСП)
+            if (phase_step == 3'd6) begin
+                phase_step  <= 3'b000;
                 macro_level <= (macro_level == 2'd3) ? 2'd1 : macro_level + 2'd1;
             end else begin
-                rule <= rule + 2'd1;
+                phase_step  <= phase_step + 3'd1;
             end
         end
     end
 
-    assign is_inversion  = rule[0];
-    assign is_enversion  = (rule == 2'd3);
-    assign error_detected = (state == 3'b000);
+    // Тетрарная разметка фрактальных переходов
+    assign is_inversion     = phase_step[0]; 
+    assign is_enversion     = (phase_step == 3'd6); // Эверсия на границе закрытия цикла
+    assign error_detected   = (state == 3'b000);
     assign invariant_closed = (macro_level != 2'd0) && !error_detected;
 endmodule
