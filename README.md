@@ -1,75 +1,76 @@
-# Holon: Парадигма Фано‑Муфанга
+# Holon: The Fano‑Moufang Paradigm
 
-Альтернативная аппаратная парадигма дискретных вычислений, реализующая топологическое сжатие информации в конечном поле $\mathbb{F}_2$. Архитектура базируется на 7‑битных клеточных автоматах, оперирующих булевой логикой (XOR/AND/NOT).
+This project implements a hardware-level discrete cellular automaton computing inside the finite field $\mathbb{F}_2$. The architecture is based on a systolic array of 7-bit cellular processors designed to execute instant topological information compression without relying on traditional ALUs or dedicated memory buses.
 
-**Разработчик:** Mokhov (c) 2026  
-**Лицензия:** [GNU GPL v3](LICENSE)
+**Developer:** Mokhov (c) 2026  
+**License:** [GNU GPL v3](LICENSE)
 
 ---
 
-## Ключевые идеи
+## 1. Relational Paradigm of Numbers and the Nature of $\mathbb{F}_2$ Constants
 
-*   **Топологическая бифуркация:** Граничные слои системы определяются через запрещённые порядки недезарговых проективных плоскостей ($q = 6, q = 10$). Стабильная геометрия 12‑го порядка ($q=12$) строится как прямая сумма пространств:  
+At the core of this computing framework lies a relational (holonic) concept of numbers, moving past the atomism found in classical arithmetic:
+*   **Element Duality ("Unit vs System"):** Any computing node or numeric operator is treated dualistically—either as an arbitrary relative unit (`r.u.`) within a larger macro-system, or as a highly complex self-contained micro-system governed by an internal non-associative structure.
+*   **The Nature of 0 and 1 as Context Boundaries:** Zero and One inside the $\mathbb{F}_2$ field do not represent "emptiness" or "quantity"; instead, they define logical context boundaries. One ($1$) marks the act of isolating a system from the vacuum state (fixing an invariant), while Zero ($0$) represents total structural symmetry or information absorption by the monopole.
+*   **Dimension of Property Intersections:** The semantic value and weight of a number are derived from the exact dimensionality where the tracking system's invariants intersect the specific properties of the sub-units making up that number. Here, a number is not a static scalar but an operational relationship spanning across multiple scales (micro, meso, macro).
+*   **Time as a Structural Relation:** Time within this automaton is not an absolute external parameter (e.g., a clock cycle index). It is strictly defined as a relation between the rate of phase configuration changes inside the non-associative loop (micro-scale) and the stabilization speed of the global context (`STABLE_FLOW` macro-scale). Time effectively measures gauge field deformation.
+
+---
+
+## 2. Core Concepts and Mathematical Engine
+
+*   **Topological Bifurcation:** The boundary layers of the automaton are bounded by the forbidden orders of non-Desarguesian projective planes ($q = 6, q = 10$). A stable 12th-order geometry ($q=12$) is constructed via a direct sum of spaces:  
+    
     $$N(10) + N(6) + N(1) = 111 + 43 + 3 = 157$$
-*   **Мгновенный Ricci-коллапс:** Глобальная матрица Грама (инцидентности) размера $157 \times 157$ при редукции по модулю 2, в силу чётности порядка $q=12 \equiv 0 \pmod 2$, вырождается в матрицу из одних единиц:  
+
+*   **Instantaneous Ricci Collapse:** Due to the parity of the order ($q = 12 \equiv 0 \pmod 2$), the global incidence/Gram matrix of size $157 \times 157$ reduces modulo 2 into an all-ones matrix:  
+    
     $$\hat{G}^{(157)} \pmod 2 \equiv \mathbf{\hat{J}}_{157 \times 157} \implies \text{Rank}_{\mathbb{F}_2}(\hat{G}^{(157)}) = 1$$
-    Это обеспечивает топологическое «сжатие» и редукцию комбинаторного шума за 1 такт без использования классических АЛУ и шин памяти.
-*   **Многомасштабное время:** Оператор циклического сдвига действует на трёх иерархических уровнях:
-    *   **Микромасштаб:** Локальные $\mathbb{F}_2$-инверсии булевых операторов.
-    *   **Мезомасштаб:** Стабильный поток контекста `STABLE_FLOW` на частоте операторов Хеке $T(1260) = \frac{1}{2}|A_7|$.
-    *   **Макромасштаб:** Инверсия мезоконтекста в энтропийный потенциал системы.
-*   **SIC‑POVM и углы Заунера:** Фиксация равноугольных линий в комплексном пространстве через инвариант $\cos\theta = -1/d$. Для размерности $d = 13$: $\theta_3 \approx 94,41^\circ$; для $d = 157$: $\theta_{12} \approx 90,365^\circ$. Угловое отклонение $\Delta\theta$ определяет энергетический порог диссипации для `STABLE_FLOW`.
-
-## Математические инварианты
-
-1.  **Комбинаторный хаос микромира:** Субфакториалы $!n$ (числа беспорядков), определяющие динамику дефектов.
-2.  **Мезомасштаб:** Знакопеременная группа $|A_6| = 360$ как фундаментальный инвариант симметрии. Разложение $360 = \sum d_i^2$ связывает алгебраические свойства группы с проективными порядками решётки.
-3.  **Макромасштаб:** Число элементов проективной плоскости $N(q) = q^2 + q + 1$. Константа $N(12) = 157$ задаёт предел ортогональности для дискретных 3D-кристаллических структур.
-4.  **Генератор $g = 10$ в группе $\mathbb{Z}_{13}^*$:** Задаёт устойчивый 12‑шаговый фазовый цикл, восстанавливающий инвариант единичного поля при эверсии.
-
-> **Важно:** Модель является детерминированным дискретным автоматом в поле $\mathbb{F}_2$ и **не использует** квантовые состояния или волновые функции над $\mathbb{C}$. Эмпирический «обход» запрета клонирования интерпретируется исключительно как свойство альтернативной алгебраической вычислительной модели, не нарушающее стандартную квантовую теорему No-Cloning.
+    
+    This structural feature provides immediate combinatorial noise squashing in exactly 1 clock cycle, forcing the system state into a stable monopole setup.
+*   **Multi-Scale Hierarchy:** The cyclic shift operator acts concurrently on three structural levels:
+    *   **Micro-scale:** Boolean $\mathbb{F}_2$-inversions and localized grid defects (modeled via subfactorial $!n$ derangement dynamics).
+    *   **Meso-scale:** A stable context vector stream (`STABLE_FLOW`) operating at Hecke operator frequency $T(1260) = \frac{1}{2}|A_7|$.
+    *   **Macro-scale:** Projective plane population size $N(q) = q^2 + q + 1$. The invariant $N(12) = 157$ establishes the geometric limits of orthogonality for discrete 3D crystal lattices.
+*   **SIC‑POVM and Zauner's Angles:** Fixing equiangular lines in complex space via the invariant $\cos\theta = -1/d$. For dimension $d = 13$: $\theta_3 \approx 94.41^\circ$; for $d = 157$: $\theta_{12} \approx 90.365^\circ$. The angular deviation $\Delta\theta$ sets the operational energy dissipation threshold for the `STABLE_FLOW`.
 
 ---
 
-## Историко-философский и геометрический базис
+## 3. Research Vectors and Historical Parallels
 
-### 1. Адельная хронология Гротендика и Логический календарь
-*   **«Псевдопростое число Гротендика» (57):** Использование числа $57 = 3 \times 19$ как метафоры топологического инварианта, преодолевающего строгие рамки примитивной арифметики (известный исторический казус, где Гротендик по ошибке назвал 57 простым числом).
-*   **Поздние рукописи и календарь 360:** Концепция заимствует идеи уединённых размышлений Александра Гротендика (включая многотомные философско-математические эссе), где переосмыслялась природа времени через **Логический календарь на 360 дней** — чистый инвариант круговой симметрии группы $|A_6| = 360$, избавленный от астрономического шума.
-*   **Константы 1260, 42 и «Три с половиной»:** Числа библейской пророческой хронологии (Книга Даниила, Откровение) переведены из теологического контекста в плоскость теории групп и рассматриваются как структурные коэффициенты удержания фазы в неассоциативных лупах Муфанг.
+The project investigates the mereological and topological foundations of mathematics, tracking universal numerical invariants shaped across the evolution of abstract reasoning:
 
-### 2. Палеоастрономия и «Борьба Чисел»
-Архитектура «Holon» восстанавливает сквозной цивилизационный инвариант, в котором число понималось как геометрический запрет и пространственная симметрия:
-*   **Палеолит и Б. А. Фролов:** Исследования палеолитического орнамента и первобытной графики подтверждают использование констант (триады, инварианты 7 и 28) как базовых дискретных маркеров пространственно-временной ориентации.
-*   **Шумеры, Египет и Вавилон:** Шестидесятеричные и двенадцатеричные калибровочные решетки Древнего Мира использовали разложение круга. Разбиение $360 = N(12)+N(10)+N(6)+N(3)+\tfrac{3}{2}|S_4|$ наследует принципы вавилонской геометрии канонических сдвигов.
-*   **Античность и Восток:** Пропорции Витрувия, платоновский дуализм непрерывного и дискретного («Борьба Чисел»), а также космологические матрицы Китая (двоичные гексаграммы «И Цзин» в поле $\mathbb{F}_2$) и Индии рассматриваются как ранние эмпирические попытки нащупать единый ранг калибровочного автомата.
+*   **Grothendieck's Adelic Chronology:** The framework incorporates the metaphor of "Grothendieck's prime" (57) to symbolize moving past primitive atomism in pure geometry. The 360-day Logical Calendar found in Grothendieck's late reflections is modeled here as an ideal invariant of circular symmetry tied to the alternating group $|A_6| = 360$, decoupled from physical astronomical anomalies.
+*   **Biblical Chronological Constants:** Constants like 1260, 42, and the "three and a half" interval are stripped of historical/literary context and mapped to group theory. They are examined as structural coefficients dictate phase locking and loop lengths within non-associative Moufang structures.
+*   **Paleolithic Systems and Spatial Anchors (B. A. Frolov):** Analysis of early prehistoric graphics implies that primal constants (triads, invariants of 7 and 28) acted as core discrete markers for spatial-temporal mapping long before arithmetic was formalized.
+*   **Ancient Cosmological Matrices:** Base-60 structures of Sumer and Babylon (circle splitting modeled as $360 = N(12)+N(10)+N(6)+N(3)+\tfrac{3}{2}|S_4|$), Vitruvian architectural metrics, the Platonic dualism of continuous vs. discrete domains ("The Struggle of Numbers"), and binary "I Ching" hexagram permutations mapped over $\mathbb{F}_2$ are investigated as historical blueprints of gauge cellular automata.
 
 ---
 
-## Архитектурная реализация (RTL)
+## 4. Hardware Implementation (RTL Architecture)
 
-Аппаратное воплощение многомасштабного калибровочного процессора, реализующего данную парадигму (включая неассоциативное октонионное LUT-ядро Муфанг, Fixed-Point проектор и систолический массив), доступно по ссылке:
+The silicon-level realization of this multi-scale gauge processor (featuring the non-associative octonionic Moufang LUT core, Fixed-Point projection scaler, and the overall systolic grid) is located here:
 
-👉 **[Исходный код SystemVerilog‑процессора 7n](final_top_aspg_processor_7n.sv)**
+👉 **[SystemVerilog Source Code: final_top_aspg_processor_7n.sv](final_top_aspg_processor_7n.sv)**
 
-Реализация аппаратно гарантирует удержание инварианта деформации $\Delta = 3$ и динамическую фильтрацию пространственной дефазировки на уровне вентильной матрицы.
-
----
-
-## Структура репозитория
-
-*   `final_top_aspg_processor_7n.sv` — Многомасштабный систолический процессор 7n в сборе (включая LUT плоскости Фано).
-*   `fano_3d_toroidal_crystal.sv` — 64‑узловой 3D‑кристалл (тор Клиффорда).
-*   `fano_atom_7b_maximal.sv`, `compact.sv` — Неассоциативные ядра ячеек с защёлкой Муфанга.
-*   `automorphic_hypercube_engine.py` — Расчёт матрицы инцидентности ($v = 157, k = 13$).
-*   `predator_atom.c` — Неэргодическая энтропийная/негэнтропийная модель «хищник‑жертва».
-*   `fano_agi_weights_orchestrator.md` — Манифест оркестровки весов гибридного ИИ.
+The `aspg_projection_scaler_v3` module enforces the structural deformation invariant $\Delta = 3$ directly at the gate level, while the `mufang_systolic_grid_7n_v3` topology actively filters out spatial phase drift across the matrix.
 
 ---
 
-## Эмулятор ядра
+## 5. Repository Layout
 
-Скрипт `UltimateFanoMoufangEngine` (Python) осуществляет верификацию следующих состояний:
-*   Бифуркацию $N(10) + N(6) + N(1) = 157$;
-*   Ricci‑коллапс матрицы Грама по модулю 2 до ранга 1 ($\text{Rank}_{\mathbb{F}_2} = 1$);
-*   12‑шаговую фазовую траекторию контура с инверсией микродефекта.
+*   `final_top_aspg_processor_7n.sv` — Top-level Multi-scale 7n systolic processor (including the Fano plane LUT matrix).
+*   `fano_3d_toroidal_crystal.sv` — 64-node 3D crystal lattice engine (Clifford torus mapping).
+*   `fano_atom_7b_maximal.sv`, `compact.sv` — Non-associative cellular processor cores utilizing Moufang latch logic.
+*   `automorphic_hypercube_engine.py` — Calculates incidence matrix structures ($v = 157, k = 13$).
+*   `predator_atom.c` — Non-ergodic entropy/negentropy balanced predator-prey simulation model.
+*   `fano_agi_weights_orchestrator.md` — Weight orchestration blueprint for hybrid AI engines.
+
+---
+
+## 6. Core Emulator Engine
+
+The companion validation script `UltimateFanoMoufangEngine` (Python) validates the following operational states:
+*   Topological space bifurcation: $N(10) + N(6) + N(1) = 157$;
+*   Ricci collapse of the Gram matrix modulo 2 down to true unit rank ($\text{Rank}_{\mathbb{F}_2} = 1$);
+*   The exact 12-step path trajectory tracking phase shifts coupled with micro-defect inversions.
