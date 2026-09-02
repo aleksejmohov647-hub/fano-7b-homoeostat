@@ -7,27 +7,17 @@ This project implements a hardware-level discrete cellular automaton computing i
 
 ---
 
-## 1. Relational Paradigm of Numbers and the Nature of $\mathbb{F}_2$ Constants
+## 1. Core Concepts and Mathematical Engine
 
-At the core of this computing framework lies a relational (holonic) concept of numbers, moving past the atomism found in classical arithmetic:
-*   **Element Duality ("Unit vs System"):** Any computing node or numeric operator is treated dualistically—either as an arbitrary relative unit (`r.u.`) within a larger macro-system, or as a highly complex self-contained micro-system governed by an internal non-associative structure.
-*   **The Nature of 0 and 1 as Context Boundaries:** Zero and One inside the $\mathbb{F}_2$ field do not represent "emptiness" or "quantity"; instead, they define logical context boundaries. One ($1$) marks the act of isolating a system from the vacuum state (fixing an invariant), while Zero ($0$) represents total structural symmetry or information absorption by the monopole.
-*   **Dimension of Property Intersections:** The semantic value and weight of a number are derived from the exact dimensionality where the tracking system's invariants intersect the specific properties of the sub-units making up that number. Here, a number is not a static scalar but an operational relationship spanning across multiple scales (micro, meso, macro).
-*   **Time as a Structural Relation:** Time within this automaton is not an absolute external parameter (e.g., a clock cycle index). It is strictly defined as a relation between the rate of phase configuration changes inside the non-associative loop (micro-scale) and the stabilization speed of the global context (`STABLE_FLOW` macro-scale). Time effectively measures gauge field deformation.
+*   **Topological Bifurcation:** The boundary layers of the automaton are bounded by the forbidden orders of non-Desarguesian projective planes ($q = 6, q = 10$). A stable 12th-order geometry ($q=12$) is constructed via a direct sum of spaces:
 
----
+$$N(10) + N(6) + N(1) = 111 + 43 + 3 = 157$$
 
-## 2. Core Concepts and Mathematical Engine
+*   **Instantaneous Ricci Collapse:** Due to the parity of the order ($q = 12 \equiv 0 \pmod 2$), the global incidence/Gram matrix of size $157 \times 157$ reduces modulo 2 into an all-ones matrix:
 
-*   **Topological Bifurcation:** The boundary layers of the automaton are bounded by the forbidden orders of non-Desarguesian projective planes ($q = 6, q = 10$). A stable 12th-order geometry ($q=12$) is constructed via a direct sum of spaces:  
-    
-    $$N(10) + N(6) + N(1) = 111 + 43 + 3 = 157$$
+$$\hat{G}^{(157)} \pmod 2 \equiv \mathbf{\hat{J}}_{157 \times 157} \implies \text{Rank}_{\mathbb{F}_2}(\hat{G}^{(157)}) = 1$$
 
-*   **Instantaneous Ricci Collapse:** Due to the parity of the order ($q = 12 \equiv 0 \pmod 2$), the global incidence/Gram matrix of size $157 \times 157$ reduces modulo 2 into an all-ones matrix:  
-    
-    $$\hat{G}^{(157)} \pmod 2 \equiv \mathbf{\hat{J}}_{157 \times 157} \implies \text{Rank}_{\mathbb{F}_2}(\hat{G}^{(157)}) = 1$$
-    
-    This structural feature provides immediate combinatorial noise squashing in exactly 1 clock cycle, forcing the system state into a stable monopole setup.
+This structural feature provides immediate combinatorial noise squashing in exactly 1 clock cycle, forcing the system state into a stable monopole setup.
 *   **Multi-Scale Hierarchy:** The cyclic shift operator acts concurrently on three structural levels:
     *   **Micro-scale:** Boolean $\mathbb{F}_2$-inversions and localized grid defects (modeled via subfactorial $!n$ derangement dynamics).
     *   **Meso-scale:** A stable context vector stream (`STABLE_FLOW`) operating at Hecke operator frequency $T(1260) = \frac{1}{2}|A_7|$.
@@ -36,7 +26,7 @@ At the core of this computing framework lies a relational (holonic) concept of n
 
 ---
 
-## 3. Research Vectors and Historical Parallels
+## 2. Research Vectors and Historical Parallels
 
 The project investigates the mereological and topological foundations of mathematics, tracking universal numerical invariants shaped across the evolution of abstract reasoning:
 
@@ -47,7 +37,7 @@ The project investigates the mereological and topological foundations of mathema
 
 ---
 
-## 4. Hardware Implementation (RTL Architecture)
+## 3. Hardware Implementation (RTL Architecture)
 
 The silicon-level realization of this multi-scale gauge processor (featuring the non-associative octonionic Moufang LUT core, Fixed-Point projection scaler, and the overall systolic grid) is located here:
 
@@ -57,7 +47,7 @@ The `aspg_projection_scaler_v3` module enforces the structural deformation invar
 
 ---
 
-## 5. Repository Layout
+## 4. Repository Layout
 
 *   `final_top_aspg_processor_7n.sv` — Top-level Multi-scale 7n systolic processor (including the Fano plane LUT matrix).
 *   `fano_3d_toroidal_crystal.sv` — 64-node 3D crystal lattice engine (Clifford torus mapping).
@@ -68,7 +58,7 @@ The `aspg_projection_scaler_v3` module enforces the structural deformation invar
 
 ---
 
-## 6. Core Emulator Engine
+## 5. Core Emulator Engine
 
 The companion validation script `UltimateFanoMoufangEngine` (Python) validates the following operational states:
 *   Topological space bifurcation: $N(10) + N(6) + N(1) = 157$;
