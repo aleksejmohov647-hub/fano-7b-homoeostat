@@ -64,3 +64,19 @@ The companion validation script `UltimateFanoMoufangEngine` (Python) validates t
 *   Topological space bifurcation: $N(10) + N(6) + N(1) = 157$;
 *   Ricci collapse of the Gram matrix modulo 2 down to true unit rank ($\text{Rank}_{\mathbb{F}_2} = 1$);
 *   The exact 12-step path trajectory tracking phase shifts coupled with micro-defect inversions.
+## Research Vector: Multiscale Quasi-Periodic Gauge Automata and Thermodynamic Eversion
+
+This repository develops a deterministic hardware-mathematical framework (ASPG 7n) that redefines the relationship between time, entropy, and structural self-organization in non-Archimedean multi-layered systems.
+
+### 1. Chronotopology as a Scale Relation
+Time is formulated not as a linear coordinate, but as a fractal parameter of phase variance between nested structural scales (micro-, meso-, and macrocosm). The transitions between these boundary layers are governed by a quasi-periodic law parameterized by the golden ratio fraction ($\Phi$). 
+Under this framework, any discrete component operates dually: it serves as a unit vector within a higher-order manifold, and simultaneously manifests as a complex subsystem relative to its constituent metrics.
+
+### 2. Generalization of the Thermodynamic Paradox
+The classical dual opposition of "Entropy vs. Negentropy" is resolved by introducing a third structural axis—topological eversion along the Z-axis. 
+* In a multiscale quasi-periodic system, a permanent gradient of scaling relations exists between the coupled layers. 
+* Entropy acts as the fundamental driving force (the kinetic engine) that attempts to equalize these structural deltas. 
+* Instead of inducing systemic degradation, this entropic flux is processed through discrete algebraic filters ($\mathbb{F}_2$ and $\mathbb{F}_{13}$ fields) and non-associative Moufang loops.
+
+### 3. Mechanism of Structural Synthesis
+The mathematical architecture utilizes forbidden projective plane orders ($q=6, 10$) as intermediate virtual phases to assemble a stable macroscale configuration of order $12$ ($N(12) = 157$). The incoming combinatorial noise (entropy) is structurally bound and rechanneled by the systolic grid (`mufang_systolic_grid_7n_v3`). This converts spatial-temporal variance into a coherent, self-correcting acoustic wave function (`global_acoustic_wave`), enforced by a strict hardware validation gate (`global_gauge_valid`).
