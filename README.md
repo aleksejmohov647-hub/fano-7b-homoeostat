@@ -80,3 +80,15 @@ The classical dual opposition of "Entropy vs. Negentropy" is resolved by introdu
 
 ### 3. Mechanism of Structural Synthesis
 The mathematical architecture utilizes forbidden projective plane orders ($q=6, 10$) as intermediate virtual phases to assemble a stable macroscale configuration of order $12$ ($N(12) = 157$). The incoming combinatorial noise (entropy) is structurally bound and rechanneled by the systolic grid (`mufang_systolic_grid_7n_v3`). This converts spatial-temporal variance into a coherent, self-correcting acoustic wave function (`global_acoustic_wave`), enforced by a strict hardware validation gate (`global_gauge_valid`).
+# Universal N-Dimensional Gauge Field Core on NumPy
+
+A high-performance Python script for simulating gauge fields of arbitrary dimensions (3D, 4D, $ND$) on a discrete toroidal lattice ($\mathbb{Z}_L^D$).
+
+### What It Does:
+* **Lattice Gauge Field Simulation:** Generates link variables $U_\mu(x)$ and computes the discrete field strength tensor (curvature) $F_{\mu\nu}(x)$ on 2D plaquettes.
+* **Yang-Mills Action Calculation:** Maps discrete finite field residues ($\mathbb{F}_p^*$) to real numbers ($\mathbb{R}$) using canonical Wilson loops and roots of unity in $\mathbb{C}^*$ to calculate total energy action.
+* **Pure NumPy Vectorization:** Demonstrates how to handle multi-dimensional modular arithmetic (binary exponentiation, coordinate shifts on a torus, and Legendre symbols) natively across high-dimensional arrays without using slow Python `for`/`while` loops or `np.vectorize`.
+
+### Prerequisites:
+* Python 3.8+
+* NumPy (`pip install numpy`)
