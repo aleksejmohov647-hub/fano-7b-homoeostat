@@ -92,3 +92,21 @@ A high-performance Python script for simulating gauge fields of arbitrary dimens
 ### Prerequisites:
 * Python 3.8+
 * NumPy (`pip install numpy`)
+### 🪐 Multi-Scale Gauge Field Model (`GaugeFieldCore7n`)
+
+A numerical simulator of a **1+1D discrete Gauge Quantum Field Theory (Lattice QFT)** over finite Galois fields $GF(p)$. 
+
+Instead of a flat continuum, the system operates on a cyclic group $Z_p^*$, capturing quantum vacuum structures, topological charge quantization, and gauge field fluctuations via Markov Chain Monte Carlo (MCMC).
+
+#### Core Concepts & Mechanics:
+* **1+1D Spacetime Topology:** Composed of a macro-coordinate time $t$ and a compactified internal gauge dimension governed by the modulation scale $n$ (resembling a discrete Kaluza-Klein torus).
+* **Topological Charge Quantization:** The coupling between the field size $p$, internal scale $n$, and the instanton index (Chern-Simons/Pontryagin invariant) $K$ is governed by the modular relation:
+  $$K \equiv 7n \pmod p$$
+  Where $K \in \{0, 1, 2, 3\}$ defines the instanton sectors of the vacuum (trivial, singlet, doublet, or triplet splitting).
+* **Stochastic Quantization:** The gauge potential $A_\mu$ fluctuates under a finite quantum inverse temperature $\beta = 1/\hbar$. Vacuum expectation values are computed using a compact $U(1)$ trigonometric Wilson action combined with a CP-violating $\theta$-vacuum term:
+  $$S[A] = \sum \left(1 - \cos\left(\frac{2\pi \Delta A}{p}\right)\right) - \theta \cdot K$$
+
+#### Observables Tracked:
+* **Wilson Lines & Topological Skeletons:** Generated via primitive root calculations and Euler's criterion (Legendre symbol $\chi(t)$).
+* **Green’s Correlator:** Measures topological closure and phase connectivity under periodic lattice shifts ($\text{roll}$).
+* **Minkowski Filling Index ($D_H$):** A box-counting proxy tracking the ergodic density and entropy of the generated quantum orbits.
