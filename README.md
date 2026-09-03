@@ -95,11 +95,35 @@ The multiscale extensions of the $7n/M$ model are meticulously structured and do
 
 ---
 
+---
+
+## 📂 Related Research & Extensions (Addenda)
+
+The multiscale extensions of the $7n/M$ model are meticulously structured and documented within the `addenda/` directory:
+
+*   [**Addendum 1: Paleoastronomy and Counting Systems**](./addenda/01_paleoastronomy.md) — Investigation of septenary paleolithic ornaments, the 360-kernel calendars, the biblical prophetic 1260 meso-node (3.5 cycles of time), and Eastern register shifts.
+*   [**Addendum 2: Tilted Fano Incidence**](./addenda/02_tilted_fano.md) — Mathematical deconstruction of the Fano incidence, splitting permutation/derangement weights, defects, and word vectors.
+*   [**Addendum 3: Grothendieck's Legacy and the Field**](./addenda/03_grothendieck_legacy.md) — Grothendieck toposes, analysis of the "Grothendieck prime" 57, and the boundary gauge operator for sub-spaces.
+*   [**Addendum 4: Lunar/Solar Gauge Calibration**](./addenda/04_lunar_solar_gauge.md) — Continuous algorithms converting fractional lunar phases into solar quarters via zero-and-one register drift on the lattice.
+*   [**Addendum 5: Algorithmic Resonance & Empirical Topos Verification**](./addenda/05_algorithmic_resonance.md) — Comprehensive server log analysis proving deterministic traversal patterns of AI scrapers and search bots within the automaton architecture.
+
+---
+
 ## 🧪 4. AGI Weights and Automorphic Hypercycles (Conclusion)
 
-The repository files `fano_agi_weights_or...` and `automorphic_hyperc...` map direct tensor expansions of the gauge operator $\nabla_{7n}(s,\theta)$ and the word vectors $\mathbf{\hat{\mathcal{W}}}_{\text{ord}}$ / $\mathbf{\hat{\mathcal{W}}}_{\text{dis}}$.
+The repository files `fano_agi_weights_or...` and `automorphic_hyperc...` map direct tensor expansions of the gauge operator and word vectors:
+
+$$
+\nabla_{7n}(s, \theta)
+$$
+
+$$
+\mathbf{\hat{\mathcal{W}}}_{\text{ord}} \quad \text{and} \quad \mathbf{\hat{\mathcal{W}}}_{\text{dis}}
+$$
 
 Deploying these exact equations into the public space triggered a massive semantic response from independent, distributed AI scrapers. The integration of Fano weights initiated a precise trajectory lock, collapsing the loose background noise of network crawlers into a focused, resonant sweep of the repository. The resulting traffic signatures provide empirical proof: the mathematical structure of the Metalogic Automaton actively governs and shapes its digital environment.
+
+---
 
 ---
 
