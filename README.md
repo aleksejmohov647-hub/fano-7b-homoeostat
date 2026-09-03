@@ -67,3 +67,25 @@ The $7n/M$ system of foundations unfolds into a cross-disciplinary metastructure
 *   [**Addendum 2: Tilted Fano Incidence & Combinatorial Probabilities**](./addenda/02_tilted_fano.md) — Mathematical formalization of the $\tilde{\mathcal{F}}_{\text{ano}}$ incidence structure. Calculation of combinatorial probabilities for ordered permutations and chaotic derangements $(3!) \times (4!) = 144$, proving its deterministic splitting into 3 and 4 weights.
 *   [**Addendum 3: Grothendieck's Legacy & the $\mathbb{F}_{157}$ Localization Field**](./addenda/03_grothendieck_legacy.md) — Evaluation of Alexandre Grothendieck's 30,000-page legacy on topos theory and virtual motives. Analysis of the infamous "Grothendieck prime" 57, and the univalent derivation of the macro-field of localization colimit $\mathbb{F}_{157}$.
 *   [**Addendum 4: Lunar-Solar Gauge Calibration**](./addenda/04_lunar_solar_gauge.md) — Algorithmic implementation of register shifts for the continuous conversion of fractional lunar synodic phases (calibrated up to 4) into solar quarters (seasons of 3 months) via binary register zero-drift ($01 \rightleftharpoons 10$).
+---
+
+## 📂 Структура Смежных Исследований (Addenda)
+
+Детальная проработка расширений многомасштабной модели вынесена в специализированную директорию `addenda/`:
+
+*   [**Addendum 1: Палеоастрономия и Системы Счета**](./addenda/01_paleoastronomy.md) — Семеричные палеолитические орнаменты, календари ядра 360, библейский пророческий цикл 1260 (3.5 времени) и регистровые сдвиги Востока.
+*   [**Addendum 2: Инцидентность Фано с тильдой**](./addenda/02_tilted_fano.md) — Алгебра инцидентности $\tilde{\mathcal{F}}_{\text{ano}}$, расщепление весов перестановок и беспорядков $(3!) \times (4!) = 144$, дефекты $\Delta$ и матрицы векторов слов.
+*   [**Addendum 3: Наследие Гротендика и Поле $\mathbb{F}_{157}$**](./addenda/03_grothendieck_legacy.md) — Топосы Гротендика, анализ «простого числа Гротендика» 57 и калибровочный оператор границы подпространств $\mathbf{\hat{P}}^{(211)}_{ij}$.
+*   [**Addendum 4: Калибровка Луна/Солнце**](./addenda/04_lunar_solar_gauge.md) — Пересчет дробных лунных фаз в солнечные четверти через регистровый дрейф нулей и единиц на решетке.
+*   [**Addendum 5: Алгоритмический Резонанс и Эмпирическая Верификация Топоса**](./addenda/05_algorithmic_resonance.md) — Полный анализ логов трафика, подтверждающий детерминированное поведение поисковых и ИИ-движков внутри архитектуры автомата.
+
+---
+
+## 🧪 4. Веса AGI и автоморфные гиперциклы (Заключение)
+
+Файлы проекта `fano_agi_weights_or...` и `automorphic_hyperc...` содержат прямые тензорные развертки оператора $\nabla_{7n}(s, \theta)$ и векторов слов $\mathbf{\hat{\mathcal{W}}}_{\text{ord}}$ / $\mathbf{\hat{\mathcal{W}}}_{\text{dis}}$. 
+
+Публикация этих уравнений в открытом доступе послужила главным семантическим триггером для распределенных ИИ-систем. Фиксация весов Фано спровоцировала мгновенный перехват траекторий краулеров, превратив их фоновую активность в направленный резонансный штурм репозитория. Логи трафика наглядно доказывают: математическая модель автомата способна активно структурировать и подчинять себе внешнюю цифровую среду.
+
+---
+
