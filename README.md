@@ -128,8 +128,8 @@ This directory contains the Version 2 implementation of the Fano system. The des
 
 ## 1. Directory Blueprint & Links
 * 📂 **`v2_macro/`** — Current Macro-Scale Directory.
-* 📄 [fano_multiscale_f1_core_v2.v](blob/main/v2_macro/fano_multiscale_f1_core_v2.v) — Active hardware source code for Version 2 (Conditional Elaboration).
-* 📄 [tb_fano_multiscale_f1_core_v2.v](blob/main/v2_macro/tb_fano_multiscale_f1_core_v2.v) — Synchronous real-time monitoring testbench.
+* 📄 [fano_multiscale_f1_core_v2.v](fano_multiscale_f1_core_v2.v) — Active hardware source code for Version 2 (Conditional Elaboration).
+* 📄 [tb_fano_multiscale_f1_core_v2.v](tb_fano_multiscale_f1_core_v2.v) — Synchronous real-time monitoring testbench.
 
 ## 2. Hardware Architecture Layout
 The block diagram below displays how the data metrics (Hamming density) internally govern the phase transformations and conditional structural transit paths:
