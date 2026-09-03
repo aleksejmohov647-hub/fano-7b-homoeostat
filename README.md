@@ -140,3 +140,12 @@ The module implements a balanced register boundary architecture with a predictiv
 
 The synthesizable source code `fano_gauge_atom_perfect_42ff.v` and the verification testbench are located in this directory:
 👉 [./v2_macro](./v2_macro)
+### 💎 Version 3: High-Throughput MiniMax Architecture (26 / 34 Register Topology)
+
+The `fano_gauge_atom_minimax` module optimizes the hardware footprint by removing the internal tracking counters (`tau` and `x_mod13`), mapping the 12-step eversion sequence directly into the structural density of the gauge field. 
+
+* **WIDTH = 8 (7 + 1 bit):** Allocates exactly **34 Flip-Flops (FF)** and **34 two-input XOR gates**. The architecture balances propagation delay by constraining the critical path within a symmetric boundary of 16 input buffer registers (`s_reg`, `f_reg`) and 18 output pipeline registers, checking rank collapse conditions over the combination probability space of 144.
+* **WIDTH = 6 (7 - 1 bit):** Trims redundant macro-scale interconnects down to **26 Flip-Flops** and **26 two-input XOR gates**. The non-associative Moufang loop topology is preserved within the upper macro-scale bits `[5:4]` via a parallel vector concatenation, maintaining the exact operational capacity of the deranged tetrad matrix ($4! - \Delta = 23$).
+
+The synthesizable file `fano_gauge_atom_minimax.v` is positioned inside the target directory:
+👉 [./v2_macro](./v2_macro)
