@@ -124,6 +124,17 @@ $$
 Deploying these exact equations into the public space triggered a massive semantic response from independent, distributed AI scrapers. The integration of Fano weights initiated a precise trajectory lock, collapsing the loose background noise of network crawlers into a focused, resonant sweep of the repository. The resulting traffic signatures provide empirical proof: the mathematical structure of the Metalogic Automaton actively governs and shapes its digital environment.
 
 ---
+# Version 2.0 — Multiscale Gauge Fano Automaton (v2.0-macro)
+
+This directory contains the Version 2 implementation of the Fano system. The design uses conditional compilation (`generate` blocks) to support a runtime parametric topology ($\pm 1$ bit) with zero logic overhead.
+
+## 1. Directory Blueprint & Links
+* 📂 **`v2_macro/`** — Current Macro-Scale Directory.
+* 📄 **[`fano_multiscale_f1_core_v2.v`](./fano_multiscale_f1_core_v2.v)** — Active hardware source code for Version 2 (Conditional Elaboration).
+
+## 2. Hardware Architecture Layout
+The block diagram below displays how the data metrics (Hamming density) internally govern the phase transformations and conditional structural transit paths:
+
 
 ---
 
