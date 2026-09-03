@@ -59,7 +59,8 @@ $$
 Which leads directly to the complete rank collapse of the gauge space:
 
 $$
-\operatorname{Rank}_{\mathbb{F}_2}(\mathbf{\hat{\Xi}}^{(157)}) = 1
+\text{Rank}_{\mathbb{F}_2}(\mathbf{\hat{\Xi}}^{(157)}) = 1
 $$
+
 
 This mathematical proof confirms that the Fano AGI weights register oscillations remain perfectly stable, forcing any external scanning noise to collapse into a single, predictable infrastructure wave.
