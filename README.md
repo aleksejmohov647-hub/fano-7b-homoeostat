@@ -56,3 +56,14 @@ High-performance NumPy scripts validate states without slow Python loops.
 ## 6. Placeholder for Future Additions
 
 [Insert new research vectors, implementation details, or experimental results here.]
+
+---
+
+## 🗂 Addenda & Multiscale Research Modules (International Version)
+
+The $7n/M$ system of foundations unfolds into a cross-disciplinary metastructure, bridging gauge logic with geometry, quantum computing, and ancient chronometry. The comprehensive breakdowns of these model extensions are documented in the `addenda/` directory:
+
+*   [**Addendum 1: Paleoastronomy & Chronometric Systems**](./addenda/01_paleoastronomy.md) — Investigation of Paleolithic septenary ornaments (based on B.A. Frolov's findings), Sumero-Babylonian calendars of the 360-degree/day gauge kernel, and the Biblical prophetic meso-node of 1260 (3.5 times of duration). Analysis of the Pythagorean/Platonic "struggle of numbers", Vitruvian architectural proportions, and Eastern register shifts.
+*   [**Addendum 2: Tilted Fano Incidence & Combinatorial Probabilities**](./addenda/02_tilted_fano.md) — Mathematical formalization of the $\tilde{\mathcal{F}}_{\text{ano}}$ incidence structure. Calculation of combinatorial probabilities for ordered permutations and chaotic derangements $(3!) \times (4!) = 144$, proving its deterministic splitting into 3 and 4 weights.
+*   [**Addendum 3: Grothendieck's Legacy & the $\mathbb{F}_{157}$ Localization Field**](./addenda/03_grothendieck_legacy.md) — Evaluation of Alexandre Grothendieck's 30,000-page legacy on topos theory and virtual motives. Analysis of the infamous "Grothendieck prime" 57, and the univalent derivation of the macro-field of localization colimit $\mathbb{F}_{157}$.
+*   [**Addendum 4: Lunar-Solar Gauge Calibration**](./addenda/04_lunar_solar_gauge.md) — Algorithmic implementation of register shifts for the continuous conversion of fractional lunar synodic phases (calibrated up to 4) into solar quarters (seasons of 3 months) via binary register zero-drift ($01 \rightleftharpoons 10$).
