@@ -133,3 +133,12 @@ This directory contains the Version 2 implementation of the Fano system. The des
 
 ## 2. Hardware Architecture Layout
 The block diagram below displays how the data metrics (Hamming density) internally govern the phase transformations and conditional structural transit paths:
+### 💎 Configurable 7±1 bit Pipeline Architecture (30 / 42 Register Balanced Topology)
+
+The module implements a balanced register boundary architecture with a predictive pipelined stage for the rank collapse validation flag. Due to structural conditional elaboration (`generate` blocks) and a flattened bit-level accumulation tree for Hamming weight extraction, the physical routing graph dynamically adapts to the selected space dimension:
+
+* **WIDTH = 8 (7 + 1 bit topology):** Allocates exactly **42 Flip-Flops (FF)** and **27 two-input XOR gates**. The register file is split symmetrically into 21 FF for the input stabilization barrier (`s_reg`, `f_reg`, `x_mod13`) and 21 FF for the output validation pipeline and monopole latch. The ternary core conditions the gauge field density across permuted combination probabilities bounded by $(3!) \times (4!) = 144$.
+* **WIDTH = 6 (7 - 1 bit topology):** Synthesizes optimized logic pathing by trimming redundant macro-scale interconnects, reconfiguring the system to exactly **30 Flip-Flops** and **23 two-input XOR gates**. The computational capacity of 23 operations is defined by the deranged tetrad capacity boundary ($4! - \Delta = 24 - 3 = 23$).
+
+The synthesizable source code and the verification testbench for the 12-step eversion sequence are located in this directory:
+👉 [./v2_macro](./v2_macro)
