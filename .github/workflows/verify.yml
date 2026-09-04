@@ -1,0 +1,27 @@
+name: Multiscale Gauge Verification
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  verify_atoms:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Icarus Verilog
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y iverilog
+
+    - name: Compile Gauge Atom Testbench
+      run: |
+        iverilog -g2012 -o fano_sim fano_gauge_atom_minimax.v fano_gauge_tb.sv
+
+    - name: Execute Eversion Simulation
+      run: |
+        vvp fano_sim
