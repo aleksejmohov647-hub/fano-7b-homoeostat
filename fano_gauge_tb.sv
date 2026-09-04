@@ -25,19 +25,19 @@ module fano_gauge_tb;
         .rank_1_monopole(rank_1_monopole)
     );
 
-    // Генератор тактовой частоты (период 10нс)
+    // Generator taktovoy chastoty (period 10ns)
     initial clk = 1'b0;
     always #5 clk = ~clk;
 
-    // Основной поток верификации
+    // Osnovnoy potok verifikacii
     initial begin
-        // Инициализация входных барьеров
+        // Inicializaciya vhodnyh barierov
         rst_n = 1'b0;
         s     = {WIDTH{1'b0}};
         f     = {WIDTH{1'b0}};
 
-        // Удерживаем сброс 2 полных такта и снимаем строго по спаду, чтобы избежать гонок
-        ##2; 
+        // Uderzhivaem sbros 2 polnyh takta i snimaem strogo po spadu, chtoby izbezhat gonok
+        repeat(2) @(posedge clk); 
         @(negedge clk);
         rst_n = 1'b1; 
         
@@ -45,35 +45,35 @@ module fano_gauge_tb;
         $display("   RUNNING: SECURE FANO-MUFANG MULTISCALE RTL TEST       ");
         $display("=========================================================");
         
-        // --- Тест 1: Подача вакуумного шума (F = 0) ---
+        // --- Test 1: Podacha vakuumnogo shuma (F = 0) ---
         @(posedge clk);
         s <= 8'hAA; 
         f <= 8'h00; 
         
-        // Ждем 2 такта, чтобы данные прошли входной барьер и вышли на s_next/f_next
+        // Zhdem 2 takta, chtoby dannye proshli vhodnoy barier i vyshli na s_next/f_next
         repeat(2) @(posedge clk);
-        #1; // Небольшая задержка чтения для красивого отображения в консоли
-        $display("[Vacuum Test] Вход: s=AA, f=00 | s_next=%h, f_next=%h, Monopole=%b", s_next, f_next, rank_1_monopole);
+        #1; // Nebolshaya zaderzhka chteniya dlya krasivogo otobrazheniya v konsoli
+        $display("[Vacuum Test] Vhod: s=AA, f=00 | s_next=%h, f_next=%h, Monopole=%b", s_next, f_next, rank_1_monopole);
 
-        // --- Тест 2: Захват аттрактора N(12) ---
-        $display("[Eversion Test] Запуск эверсии по модулю 13 на решетке N(12)...");
+        // --- Test 2: Zahvat attraktora N(12) ---
+        $display("[Eversion Test] Zapusk eversii po modulyu 13 na reshetke N(12)...");
         
         @(posedge clk);
-        s <= 8'h39; // Константа ATTR_N12 старшая часть
-        f <= 8'hF1; // Константа ATTR_N12 младшая часть (в сумме 16'h39F1)
+        s <= 8'h39; // Konstanta ATTR_N12 starshaya chast
+        f <= 8'hF1; // Konstanta ATTR_N12 mladshaya chast (v summe 16'h39F1)
 
-        // Конвейер: 
-        // 1-й такт: запись в s_reg/f_reg
-        // 2-й такт: вычисление s_next/f_next и запись в monopole_pipe
-        // 3-й такт: фиксация в rank_1_monopole
+        // Konveyer: 
+        // 1-y takt: zapis v s_reg/f_reg
+        // 2-y takt: vychislenie s_next/f_next i zapis v monopole_pipe
+        // 3-y takt: fiksaciya v rank_1_monopole
         repeat(3) @(posedge clk);
-        #1; // Сдвиг для захвата стабильного состояния регистра
+        #1; // Sdvig dlya zahvata stabilnogo sostoyaniya registra
         
         if (rank_1_monopole) begin
-            $display("[SUCCESS] Адельный коллапс зафиксирован!");
-            $display("[SUCCESS] Безопасный двухтактный замок монополя J взведен.");
+            $display("[SUCCESS] Adelny kollaps zafiksirovan!");
+            $display("[SUCCESS] Bezopasny dvuhtaktny zamok monopola J vzveden.");
         end else begin
-            $display("[FAIL] Калибровочный замок не сработал. s_next=%h, f_next=%h", s_next, f_next);
+            $display("[FAIL] Kalibrovochny zamok ne srabotal. s_next=%h, f_next=%h", s_next, f_next);
         end
 
         $display("=========================================================");
@@ -83,4 +83,4 @@ module fano_gauge_tb;
 
 endmodule
 
-`default_nettype wire // Возвращаем дефолтный режим
+`default_nettype wire // Vozvraschaem defoltny rezhim
