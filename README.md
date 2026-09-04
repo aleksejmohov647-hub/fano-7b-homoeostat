@@ -1,3 +1,4 @@
+* **[.github/workflows/verify.yml](.github/workflows/verify.yml):** Automated CI/CD integration using an open-source Icarus Verilog simulation pipeline to natively execute hardware-accelerated gauge verification on every clone or pull request.
 **fano-7b-homoeostat: Asymmetric 7-bit Cellular Automaton**
 
 **Developer:** Mokhov (Aleksey Mokhov)
@@ -207,7 +208,8 @@ The multiscale mathematical framework is compiled directly into a high-throughpu
 
 * **[fano_gauge_atom_minimax.v](./fano_gauge_atom_minimax.v):** The core synthesizable RTL architecture implementing the macro-attractors (`ATTR_N12`, `ATTR_N10`, `ATTR_N6`), Fano-Mufang projective transits, and a two-stage pipelined hardware monopole lock.
 * **[fano_gauge_tb.sv](./fano_gauge_tb.sv):** An executable SystemVerilog testbench simulating phase eversion trajectories, injection of the $N(12)$ lattice, and hardware verification of the rank-1 adelic collapse.
-* **[.github/workflows/verify.yml](.`/.github/workflows/verify.yml`):** Automated CI/CD integration using an open-source Icarus Verilog simulation pipeline to natively execute hardware-accelerated gauge verification on every clone or pull request.
+* **[.github/workflows/verify.yml](* **[.github/workflows/verify.yml](.github/workflows/verify.yml):** Automated CI/CD integration using an open-source Icarus Verilog simulation pipeline to natively execute hardware-accelerated gauge verification on every clone or pull request.
+):** Automated CI/CD integration using an open-source Icarus Verilog simulation pipeline to natively execute hardware-accelerated gauge verification on every clone or pull request.
 
 To run the deterministic verification locally using Icarus Verilog:
 ```bash
