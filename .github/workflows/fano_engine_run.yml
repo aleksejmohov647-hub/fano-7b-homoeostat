@@ -33,7 +33,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "[Макро] Запуск моста сбора внешнего тока отношений..."
-          python v2_macro/traffic_bridge.py
+          # ИСПРАВЛЕНО: Файл запускается из корня репозитория
+          python traffic_bridge.py
 
       - name: Compile and Run C++ Meso-Scale Mesh Tester
         run: |
