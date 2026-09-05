@@ -231,3 +231,5 @@ $$\text{Left Pole (63)} = \mathcal{D}_{13} + \mathcal{D}_{60} - 10 = 13 + 60 - 1
 $$\text{Right Pole (94)} = \mathcal{D}_{84} + 10 = 84 + 10 = 94$$
 
 Under Riemann's integral mean value evaluation, the counter-flowing phase streams on the 63/94 bridge force the exact analytical cancellation of the $\pm \sin(126\pi \omega / 157)/4$ remnants. This yields an unyielding analytical identity $\lambda_\omega = N = 157$ across all macro-modes, establishing a strict non-zero normalization mass gap ($\delta = 1/N \approx 0.6369\%$) that completely prevents ultraviolet divergence and guarantees vacuum isotropy.
+<!-- FANO_CRYSTAL_START -->
+<!-- FANO_CRYSTAL_END -->
