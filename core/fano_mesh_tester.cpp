@@ -10,9 +10,7 @@ struct FanoAtom3DNode {
     uint8_t reg_f = 0x00;
 
     void step(bool is_compact_mode, uint8_t s_in, uint8_t f_in, int width) {
-        // ИСПРАВЛЕНО: Добавлены скобки вокруг операторов ^, так как у & приоритет выше
         bool p4 = (((reg_s >> 3) & 1) ^ ((reg_f >> 4) & 1)) & (((reg_s >> 4) & 1) ^ ((reg_f >> 3) & 1));
-        
         uint8_t m = (((reg_s >> 3) & 1) << 2) | (((reg_s >> 4) & 1) << 1) | (((reg_s >> 3) & 1) ^ ((reg_s >> 4) & 1));
         uint8_t s_stage_hi = is_compact_mode ? ((reg_s >> 4) ^ 0x04) : ((reg_s >> 4) ^ m);
         uint8_t s_stage = (s_stage_hi << 4) | (reg_s & 0x0F);
@@ -28,8 +26,6 @@ int main() {
     int width = 8, global_compact = 0, clones = 156, cloners = 56;
     if (config.is_open()) {
         config >> width >> global_compact >> clones >> cloners;
-    } else {
-        std::cerr << "[Предупреждение] core/fano_config.txt не найден, запуск на дефолтах.\n";
     }
 
     std::cout << "[C++ Мезо] Настройка топоса решетки...\n";
@@ -40,16 +36,25 @@ int main() {
     uint8_t s_net[SIZE][SIZE][SIZE];
     uint8_t f_net[SIZE][SIZE][SIZE];
 
-    for(int x=0; x<SIZE; ++x)
-        for(int y=0; y<SIZE; ++y)
+    for(int x=0; x<SIZE; ++x) {
+        for(int y=0; y<SIZE; ++y) {
             for(int z=0; z<SIZE; ++z) {
                 s_net[x][y][z] = crystal[x][y][z].reg_s;
                 f_net[x][y][z] = crystal[x][y][z].reg_f;
             }
+        }
+    }
 
-    uint8_t entropy[SIZE][SIZE][SIZE] = {0};
-    entropy[0][0][0] = clones & 0x7F;
-    entropy[SIZE-1][SIZE-1][SIZE-1] = cloners & 0x7F;
+    // ИСПРАВЛЕНО: Корректное заполнение трехмерного массива через циклы в C++
+    uint8_t entropy[SIZE][SIZE][SIZE];
+    for(int x=0; x<SIZE; ++x) {
+        for(int y=0; y<SIZE; ++y) {
+            for(int z=0; z<SIZE; ++z) {
+                entropy[x][y][z] = static_cast<uint8_t>(clones & 0x7F);
+            }
+        }
+    }
+    entropy[SIZE-1][SIZE-1][SIZE-1] = static_cast<uint8_t>(cloners & 0x7F);
 
     for (int t = 1; t <= 12; ++t) {
         FanoAtom3DNode next_crystal[SIZE][SIZE][SIZE];
@@ -71,13 +76,15 @@ int main() {
                 }
             }
         }
-        for(int x=0; x<SIZE; ++x)
-            for(int y=0; y<SIZE; ++y)
+        for(int x=0; x<SIZE; ++x) {
+            for(int y=0; y<SIZE; ++y) {
                 for(int z=0; z<SIZE; ++z) {
                     crystal[x][y][z] = next_crystal[x][y][z];
                     s_net[x][y][z] = crystal[x][y][z].reg_s;
                     f_net[x][y][z] = crystal[x][y][z].reg_f;
                 }
+            }
+        }
     }
 
     std::cout << "[C++ Мезо] 12 тактов успешно обсчитаны. Стабилизация решетки удержана.\n";
