@@ -8,8 +8,8 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/fano_params.vh'
-      - '**/fano_config.txt'
+      - 'core/fano_params.vh'
+      - 'core/fano_config.txt'
 
 permissions:
   contents: write
@@ -37,43 +37,24 @@ jobs:
 
       - name: Compile and Run C++ Meso-Scale Mesh Tester
         run: |
-          echo "[Мезо] Поиск и компиляция симулятора кристалла..."
-          # Автоматический поиск C++ файла во всех подпапках
-          CPP_FILE=$(find . -name "fano_mesh_tester.cpp" | head -n 1)
-          if [ -n "$CPP_FILE" ]; then
-            DIR_PATH=$(dirname "$CPP_FILE")
-            g++ -O3 "$CPP_FILE" -o "$DIR_PATH/fano_mesh_tester"
-            echo "[Мезо] Запуск симулятора 3D-решетки под нагрузкой трафика..."
-            "$DIR_PATH/fano_mesh_tester"
-          else
-            echo "[Предупреждение] fano_mesh_tester.cpp не найден, пропускаем шаг."
-          fi
+          echo "[Мезо] Компиляция высокоскоростного симулятора кристалла..."
+          g++ -O3 core/fano_mesh_tester.cpp -o core/fano_mesh_tester
+          echo "[Мезо] Запуск симулятора 3D-решетки под нагрузкой трафика..."
+          ./core/fano_mesh_tester
 
       - name: Auto-Commit Refined Dimension Scales (The Trap)
         run: |
           git config --global user.name "7n-Gauge-Automaton"
           git config --global user.email "automaton@7n.internal"
           
-          # Автоматический поиск конфигурационных файлов во всех подпапках
-          TARGET_FILE=$(find . -name "fano_params.vh" | head -n 1)
-          CONFIG_FILE=$(find . -name "fano_config.txt" | head -n 1)
+          TARGET_FILE="core/fano_params.vh"
+          CONFIG_FILE="core/fano_config.txt"
           
-          CHANGES_FOUND=false
-          
-          if [ -n "$TARGET_FILE" ] && [ -n "$(git status --porcelain "$TARGET_FILE")" ]; then
-            git add "$TARGET_FILE"
-            CHANGES_FOUND=true
-          fi
-          
-          if [ -n "$CONFIG_FILE" ] && [ -n "$(git status --porcelain "$CONFIG_FILE")" ]; then
-            git add "$CONFIG_FILE"
-            CHANGES_FOUND=true
-          fi
-          
-          if [ "$CHANGES_FOUND" = true ]; then
+          if [ -n "$(git status --porcelain $TARGET_FILE)" ] || [ -n "$(git status --porcelain $CONFIG_FILE)" ]; then
             echo "[Топология] Обнаружено изменение фазы! Запись размерностей..."
+            git add $TARGET_FILE $CONFIG_FILE
             git commit -m "chore(core): auto-recalibration of 3D crystal dimensions [phase mod 13] [skip ci]"
             git push origin main
           else
-            echo "[Вакуум] Изменений фазы нет или файлы не найдены, система удерживает форму. Стабилизация."
+            echo "[Вакуум] Изменений фазы нет, система удерживает форму. Стабилизация."
           fi
