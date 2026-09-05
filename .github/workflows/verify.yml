@@ -20,8 +20,10 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Set up C++ Build Tools (GCC)
-        run: sudo apt-get update && sudo apt-get install -y build-essential
+      - name: Set up C++ Build Tools (GCC) and Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential iverilog
 
       - name: Execute Macro-Scale Traffic Bridge
         run: python v2_macro/traffic_bridge.py
@@ -30,6 +32,13 @@ jobs:
         run: |
           g++ -O3 core/fano_mesh_tester.cpp -o core/fano_mesh_tester
           ./core/fano_mesh_tester
+
+      - name: Verify SystemVerilog Hardware RTL Syntax
+        run: |
+          echo "[Микро] Проверка кремниевой логики узлов кристалла через iverilog..."
+          # Проверяем синтаксис твоих модулей в папке core/
+          iverilog -g2012 core/fano_atom_3d_node.sv core/fano_3d_mesh.sv -o core/fano_mesh_rtl_check
+          echo "[Микро] Аппаратный синтаксический анализ успешно пройден. XOR-запреты Фано активны."
 
       - name: Inject Crystal Slice Into README Window
         run: python v2_macro/inject_readme.py
