@@ -3,11 +3,10 @@ name: "Fano-Desargues Multi-Scale Gauge Trap"
 on:
   schedule:
     - cron: '0 * * * *' # Автоматический запуск ловушки каждый час
-  workflow_dispatch:   # Позволяет запускать ловушку вручную кнопкой из веб-интерфейса
+  workflow_dispatch:   # Позволяет запускать ловушку вручную кнопкой
   push:
     branches:
       - main
-    # ИСПРАВЛЕНО: Экшен НЕ будет запускаться, если изменения произошли ТОЛЬКО в этих файлах
     paths-ignore:
       - 'core/fano_params.vh'
       - 'core/fano_config.txt'
@@ -28,11 +27,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
-      - name: Set up C++ Build Tools (GCC)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential
 
       - name: Execute Macro-Scale Traffic Bridge
         env:
@@ -56,12 +50,9 @@ jobs:
           TARGET_FILE="core/fano_params.vh"
           CONFIG_FILE="core/fano_config.txt"
           
-          # Проверяем изменения в обоих файлах, которые создает Python-скрипт
           if [ -n "$(git status --porcelain $TARGET_FILE)" ] || [ -n "$(git status --porcelain $CONFIG_FILE)" ]; then
             echo "[Топология] Обнаружено изменение фазы! Запись размерностей..."
             git add $TARGET_FILE $CONFIG_FILE
-            
-            # ИСПРАВЛЕНО: Добавлен тег [skip ci], чтобы GitHub не зацикливал экшен
             git commit -m "chore(core): auto-recalibration of 3D crystal dimensions [phase mod 13] [skip ci]"
             git push origin main
           else
