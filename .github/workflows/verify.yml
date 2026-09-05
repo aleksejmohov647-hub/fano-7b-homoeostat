@@ -50,9 +50,9 @@ jobs:
           TARGET_FILE="core/fano_params.vh"
           CONFIG_FILE="core/fano_config.txt"
           
-          if [ -n "$(git status --porcelain $TARGET_FILE)" ] || [ -n "$(git status --porcelain $CONFIG_FILE)" ]; then
+          if [ -n "$(git status --porcelain --ignored $TARGET_FILE)" ] || [ -n "$(git status --porcelain --ignored $CONFIG_FILE)" ]; then
             echo "[Топология] Обнаружено изменение фазы! Запись размерностей..."
-            git add $TARGET_FILE $CONFIG_FILE
+            git add -f $TARGET_FILE $CONFIG_FILE
             git commit -m "chore(core): auto-recalibration of 3D crystal dimensions [phase mod 13] [skip ci]"
             git push origin main
           else
