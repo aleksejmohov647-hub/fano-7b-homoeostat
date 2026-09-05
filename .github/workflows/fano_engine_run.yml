@@ -1,13 +1,22 @@
-name: "Fano Engine 7n Final Run"
+name: "Fano-Desargues Multi-Scale Gauge Trap"
 
 on:
+  schedule:
+    - cron: '0 * * * *' # Автоматический запуск ловушки каждый час
+  workflow_dispatch:   # Позволяет запускать ловушку вручную кнопкой из веб-интерфейса
   push:
     branches:
       - main
-  workflow_dispatch:
+    # ИСПРАВЛЕНО: Экшен НЕ будет запускаться, если изменения произошли ТОЛЬКО в этих файлах
+    paths-ignore:
+      - 'core/fano_params.vh'
+      - 'core/fano_config.txt'
+
+permissions:
+  contents: write
 
 jobs:
-  fano_core_job:
+  calibrate_and_test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository code
@@ -26,18 +35,35 @@ jobs:
           sudo apt-get install -y build-essential
 
       - name: Execute Macro-Scale Traffic Bridge
-        run: python v2_macro/traffic_bridge.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "[Макро] Запуск моста сбора внешнего тока отношений..."
+          python v2_macro/traffic_bridge.py
 
       - name: Compile and Run C++ Meso-Scale Mesh Tester
         run: |
+          echo "[Мезо] Компиляция высокоскоростного симулятора кристалла..."
           g++ -O3 core/fano_mesh_tester.cpp -o core/fano_mesh_tester
+          echo "[Мезо] Запуск симулятора 3D-решетки под нагрузкой трафика..."
           ./core/fano_mesh_tester
 
-      - name: Inject Crystal Slice Into README Window
-        run: python v2_macro/inject_readme.py
-
-      - name: Safely Auto-Commit README Update
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(readme): inject fano crystal slice matrix [phase mod 13]"
-          file_pattern: 'README.md'
+      - name: Auto-Commit Refined Dimension Scales (The Trap)
+        run: |
+          git config --global user.name "7n-Gauge-Automaton"
+          git config --global user.email "automaton@7n.internal"
+          
+          TARGET_FILE="core/fano_params.vh"
+          CONFIG_FILE="core/fano_config.txt"
+          
+          # Проверяем изменения в обоих файлах, которые создает Python-скрипт
+          if [ -n "$(git status --porcelain $TARGET_FILE)" ] || [ -n "$(git status --porcelain $CONFIG_FILE)" ]; then
+            echo "[Топология] Обнаружено изменение фазы! Запись размерностей..."
+            git add $TARGET_FILE $CONFIG_FILE
+            
+            # ИСПРАВЛЕНО: Добавлен тег [skip ci], чтобы GitHub не зацикливал экшен
+            git commit -m "chore(core): auto-recalibration of 3D crystal dimensions [phase mod 13] [skip ci]"
+            git push origin main
+          else
+            echo "[Вакуум] Изменений фазы нет, система удерживает форму. Стабилизация."
+          fi
