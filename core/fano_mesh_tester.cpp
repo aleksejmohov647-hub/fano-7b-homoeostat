@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdint>
+#include <iomanip>
 
 constexpr int SIZE = 4;
 
@@ -27,10 +28,6 @@ int main() {
     if (config.is_open()) {
         config >> width >> global_compact >> clones >> cloners;
     }
-
-    std::cout << "[C++ Мезо] Настройка топоса решетки...\n";
-    std::cout << "           Текущая разрядность ядра (WIDTH): " << width << "\n";
-    std::cout << "           Режим удержания энтропии (Compact): " << global_compact << "\n";
 
     FanoAtom3DNode crystal[SIZE][SIZE][SIZE];
     uint8_t s_net[SIZE][SIZE][SIZE];
@@ -86,6 +83,18 @@ int main() {
         }
     }
 
-    std::cout << "[C++ Мезо] 12 тактов успешно обсчитаны. Стабилизация решетки удержана.\n";
+    // Экспорт двумерного среза Z=0 трехмерного кристалла в файл
+    std::ofstream out_slice("core/crystal_slice.txt");
+    if (out_slice.is_open()) {
+        for(int x=0; x<SIZE; ++x) {
+            for(int y=0; y<SIZE; ++y) {
+                out_slice << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << (int)s_net[x][y][0] << " ";
+            }
+            out_slice << "\n";
+        }
+        out_slice.close();
+    }
+
+    std::cout << "[C++ Мезо] 12 тактов обсчитаны. Срез Z=0 сохранен.\n";
     return 0;
 }
