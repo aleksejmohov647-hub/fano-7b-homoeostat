@@ -45,7 +45,6 @@ int main() {
         }
     }
 
-    // ИСПРАВЛЕНО: Корректное заполнение трехмерного массива через циклы в C++
     uint8_t entropy[SIZE][SIZE][SIZE];
     for(int x=0; x<SIZE; ++x) {
         for(int y=0; y<SIZE; ++y) {
