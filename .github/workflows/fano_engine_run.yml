@@ -1,0 +1,47 @@
+name: "Fano Engine 7n Final Run"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  fano_core_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up C++ Build Tools (GCC) and Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential iverilog
+
+      - name: Execute Macro-Scale Traffic Bridge
+        run: python v2_macro/traffic_bridge.py
+
+      - name: Compile and Run C++ Meso-Scale Mesh Tester
+        run: |
+          g++ -O3 core/fano_mesh_tester.cpp -o core/fano_mesh_tester
+          ./core/fano_mesh_tester
+
+      - name: Verify SystemVerilog Hardware RTL Syntax
+        run: |
+          iverilog -g2012 core/fano_atom_3d_node.sv core/fano_3d_mesh.sv -o core/fano_mesh_rtl_check
+
+      - name: Inject Crystal Slice Into README Window
+        run: python v2_macro/inject_readme.py
+
+      - name: Safely Auto-Commit README Update
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(readme): inject fano crystal slice matrix [phase mod 13]"
+          file_pattern: 'README.md'
