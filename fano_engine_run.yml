@@ -1,20 +1,17 @@
-name: "Fano-Desargues Multi-Scale Gauge Trap"
+name: "Fano Engine 7n Auto Run"
 
 on:
-  schedule:
-    - cron: '0 * * * *'
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  calibrate_and_test:
+  fano_core_job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python Environment
         uses: actions/setup-python@v5
@@ -25,8 +22,6 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y build-essential
 
       - name: Execute Macro-Scale Traffic Bridge
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python v2_macro/traffic_bridge.py
 
       - name: Compile and Run C++ Meso-Scale Mesh Tester
