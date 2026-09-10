@@ -1,0 +1,87 @@
+`default_nettype none
+
+// Атом остается прежним — это чистая комбинаторная функция (LUT)
+module fano_atom_7b_maximal (
+    input  wire [6:0] s,
+    input  wire [6:0] f,
+    output wire [6:0] s_next,
+    output wire [6:0] f_next
+);
+    wire p4 = (s[3] ^ f[4]) & (s[4] ^ f[3]);
+    wire [2:0] m = {s[3], s[4], s[3] ^ s[4]};
+
+    assign s_next = { (s[6:4] ^ m ^ f[6:4]), (s[3:0] ^ f[3:0]) };
+    assign f_next = s ^ (f & {7{p4}});
+endmodule
+
+(* optimize_power = "TRUE", retiming = "TRUE" *)
+module fano_3d_mesh #(
+    parameter SIZE = 4
+)(
+    input  logic       clk,
+    input  logic       rst_n,
+    input  logic [6:0] external_entropy [0:SIZE-1][0:SIZE-1][0:SIZE-1],
+    output logic [6:0] crystal_s_out    [0:SIZE-1][0:SIZE-1][0:SIZE-1],
+    output logic [6:0] crystal_f_out    [0:SIZE-1][0:SIZE-1][0:SIZE-1]
+);
+
+    // Локальные комбинаторные выходы атомов внутри текущего узла
+    wire [6:0] atom_s_next [0:SIZE-1][0:SIZE-1][0:SIZE-1];
+    wire [6:0] atom_f_next [0:SIZE-1][0:SIZE-1][0:SIZE-1];
+
+    // Регистры состояния (Память кристалла)
+    logic [6:0] reg_s [0:SIZE-1][0:SIZE-1][0:SIZE-1];
+    logic [6:0] reg_f [0:SIZE-1][0:SIZE-1][0:SIZE-1];
+
+    generate
+        genvar x, y, z;
+        for (x = 0; x < SIZE; x = x + 1) begin: gen_x
+            for (y = 0; y < SIZE; y = y + 1) begin: gen_y
+                for (z = 0; z < SIZE; z = z + 1) begin: gen_z
+                    
+                    // Тороидальные индексы соседей
+                    localparam xl = (x == 0)        ? SIZE-1 : x-1;
+                    localparam xr = (x == SIZE-1)   ? 0      : x+1;
+                    localparam yd = (y == 0)        ? SIZE-1 : y-1;
+                    localparam yu = (y == SIZE-1)   ? 0      : y+1;
+                    localparam zb = (z == 0)        ? SIZE-1 : z-1;
+                    localparam zf = (z == SIZE-1)   ? 0      : z+1;
+
+                    // ИСПРАВЛЕНИЕ: Взаимодействие идет через REG_F соседей (Разрыв петли)
+                    wire [6:0] s_in_wire = reg_f[xl][y][z] ^ reg_f[xr][y][z] ^ 
+                                           reg_f[x][yd][z] ^ reg_f[x][yu][z] ^ 
+                                           external_entropy[x][y][z];
+                                      
+                    // ИСПРАВЛЕНИЕ: Здесь также используем REG_S соседей
+                    wire [6:0] f_in_wire = reg_s[x][y][zb] ^ reg_s[x][y][zf];
+
+                    // Инстанс атома: берет текущее состояние узла и формирует кандидат на следующий такт
+                    fano_atom_7b_maximal atom_inst (
+                        .s      (reg_s[x][y][z]),
+                        .f      (f_in_wire),
+                        .s_next (atom_s_next[x][y][z]),
+                        .f_next (atom_f_next[x][y][z])
+                    );
+
+                    // Синхронный мезо-уровень фиксации состояний
+                    always_ff @(posedge clk or negedge rst_n) begin
+                        if (!rst_n) begin
+                            reg_s[x][y][z] <= 7'h3F; 
+                            reg_f[x][y][z] <= 7'h00;
+                        end else begin
+                            // Подмес пространственного хаоса s_in_wire к вычисленному следующему состоянию
+                            reg_s[x][y][z] <= atom_s_next[x][y][z] ^ s_in_wire; 
+                            reg_f[x][y][z] <= atom_f_next[x][y][z];
+                        end
+                    end
+
+                    // Вывод наружу стабильных регистровых значений
+                    assign crystal_s_out[x][y][z] = reg_s[x][y][z];
+                    assign crystal_f_out[x][y][z] = reg_f[x][y][z];
+
+                end
+            end
+        end
+    endgenerate
+endmodule
+`default_nettype wire
