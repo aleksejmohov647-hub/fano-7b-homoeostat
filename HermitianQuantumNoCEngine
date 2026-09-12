@@ -1,0 +1,116 @@
+import numpy as np
+from typing import Dict, Any
+
+class HermitianQuantumNoCEngine:
+    """
+    Алгебраический верификатор спектральных свойств графа смежности NoC (N=157)
+    на базе декомпозиции запрещенных проективных порядков и стохастического возмущения.
+    """
+    def __init__(self):
+        self.v = 157
+        # Строгая декомпозиция триады комбинаторных операторов от F1
+        self.z43 = list(range(0, 43))       # Подпространство порядка q=6  (|!5 - !2| = 43)
+        self.z111 = list(range(43, 154))    # Подпространство порядка q=10 (|5! - !4| = 111)
+        self.z3 = list(range(154, 157))     # Выделенный стохатастический кластер (|3*F1| = 3)
+
+    def build_adjacency_matrix(self, p_weights: list, noise_level: float = 0.0) -> np.ndarray:
+        """
+        Конструирует комплексную Эрмитову матрицу смежности графа.
+        """
+        A = np.zeros((self.v, self.v), dtype=np.complex128)
+        
+        # 1. Формирование базовой связности регулярных локальных колец
+        for z in [self.z43, self.z111]:
+            sz = len(z)
+            for i in range(sz):
+                A[z[i], z[(i + 1) % sz]] = 1.0
+                A[z[(i + 1) % sz], z[i]] = 1.0
+
+        # 2. Инъекция хордовых операторов сжатия метрического пространства
+        # Подпространство 43 (простая размерность, шаг 12 взаимно прост)
+        for i in range(43):
+            A[self.z43[i], self.z43[(i + 12) % 43]] = 1j
+            A[self.z43[(i + 12) % 43], self.z43[i]] = -1j
+            
+        # Подпространство 111 (составная размерность, шаг 12 + наклон Фано !5=44 -> итоговый шаг 56)
+        for i in range(111):
+            u = self.z111[i]
+            v = self.z111[(i + 12 + 44) % 111]
+            A[u, v] = 1j
+            A[v, u] = -1j
+
+        # 3. Моделирование низкорангового стохастического возмущения через кластер Z3
+        for idx, valve_node in enumerate(self.z3):
+            p_current = p_weights[idx]
+            
+            # Интерфейсные связи с подпространством 43 (шаг распределения кратен 4)
+            for step in range(0, 43, 4):
+                weight = p_current * 1j
+                if noise_level > 0:
+                    weight += np.random.normal(0, noise_level) * 1j
+                A[valve_node, self.z43[step]] = weight
+                A[self.z43[step], valve_node] = np.conj(weight)
+                
+            # Интерфейсные связи с подпространством 111 (шаг распределения кратен 12)
+            for step in range(0, 111, 12):
+                weight = p_current
+                if noise_level > 0:
+                    weight += np.random.normal(0, noise_level)
+                A[valve_node, self.z111[step]] = weight
+                A[self.z111[step], valve_node] = np.conj(weight)
+
+        return A
+
+    def evaluate_spectrum(self, noise_level: float = 0.0) -> Dict[str, Any]:
+        """
+        Вычисляет собственные значения Эрмитовой матрицы смежности графа.
+        """
+        base_probabilities = [1.0/3.0, 1.0/2.0, 1.0] # Кванты инцидентности от 0 до 8
+        A = self.build_adjacency_matrix(base_probabilities, noise_level)
+        
+        # Для строго Эрмитовых матриц используется специализированный устойчивый решатель
+        eg = np.linalg.eigvalsh(A)
+        eg_abs = np.sort(np.abs(eg))[::-1]
+        
+        l0, l1 = eg_abs[0], eg_abs[1]
+        ratio = l1 / l0 if l0 != 0 else 1.0
+        
+        return {
+            "lambda_0_max": float(l0),
+            "lambda_1_next": float(l1),
+            "spectral_gap": float(l0 - l1),
+            "harmonic_ratio": float(ratio),
+            "topology_status": "F1_PROBABILITY_OPEN" if ratio < 0.95 else "STALL_RESONANCE"
+        }
+
+    def run_statistical_stability_test(self, iterations: int = 500, noise: float = 0.05) -> Dict[str, float]:
+        """
+        Оценивает устойчивость спектрального зазора к фазовым шумам методом Монте-Карло.
+        """
+        ratios = []
+        gaps = []
+        base_probabilities = [1.0/3.0, 1.0/2.0, 1.0]
+        
+        for _ in range(iterations):
+            A = self.build_adjacency_matrix(base_probabilities, noise_level=noise)
+            eg = np.linalg.eigvalsh(A)
+            eg_abs = np.sort(np.abs(eg))[::-1]
+            ratios.append(eg_abs[1] / eg_abs[0])
+            gaps.append(eg_abs[0] - eg_abs[1])
+            
+        return {
+            "mc_mean_ratio": float(np.mean(ratios)),
+            "mc_max_ratio": float(np.max(ratios)),
+            "mc_mean_gap": float(np.mean(gaps)),
+            "stability_index": "HIGHLY_STABLE" if np.max(ratios) < 0.95 else "UNSTABLE"
+        }
+
+if __name__ == "__main__":
+    engine = HermitianQuantumNoCEngine()
+    print("--- [ЭТАП 1]: ВЕЩЕСТВЕННЫЙ СПЕКТРАЛЬНЫЙ АНАЛИЗ ЭРМИТОВА ТОПОСА ---")
+    for k, v in engine.evaluate_spectrum().items():
+        print(f"{k}: {v:.4f}" if isinstance(v, float) else f"{k}: {v}")
+        
+    print("\n--- [ЭТАП 2]: АНАЛИЗ УСТОЙЧИВОСТИ МЕТОДОМ МОНТЕ-КАРЛО (ШУМ 5%) ---")
+    for k, v in engine.run_statistical_stability_test().items():
+        print(f"{k}: {v:.4f}" if isinstance(v, float) else f"{k}: {v}")
