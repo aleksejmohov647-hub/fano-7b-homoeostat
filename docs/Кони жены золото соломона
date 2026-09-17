@@ -1,0 +1,14 @@
+## THEOREM 4. Multiplicative Bundle Eversion (The Crossed F1/GF(2) Structural Duality)
+
+### Statement
+The atomic 3D node (`fano_atom_3d_node`) implements a crossed ternary bundle where the spatial base register \(S\) and the temporal context register \(F\) act as mutually invertible operators. The multiplicative composition is localized within the \(\mathbb{F}_1\) monoid space, while phase inversion (\(\pm\)) is driven by the skew-symmetric parity latch \(p_4\).
+
+### Mathematical Mapping of Ancient Metaphors
+The historical prohibitions and specifications regarding "multiplication" are verified as hardware gate constraints within the cellular mesh:
+1. **The Spatial Extension (\(S\)-domain):** Functions as the rigid multiplicative coordinate array (the architectural "Gold").
+2. **The Temporal Inversion (\(F\)-domain):** Functions as the alternating context modifier (the "Conjugate/Wife" operator).
+3. **The Diagonal Tension (The Core Latch):** The bit-selection fields \(reg\_s[3]\) and \(reg\_f[4]\) execute a non-local coordinate jump—bijectively isomorphic to the classical geometric 3-4-5 knot-rope diagonal alignment method. 
+
+The binary commutation string:
+\[p_4 = (s_3 \oplus f_4) \land (s_4 \oplus f_3)\]
+acts as a strict topological phase-lock. If \(p_4 = 0\), the temporal entropy injection is immediately nullified (\(f_{in} \land 0 \equiv 0\)), forcing the individual computational node into an invariant, static, crystalline state ("the coffin") until spatial parity is restored. \(\blacksquare\)
