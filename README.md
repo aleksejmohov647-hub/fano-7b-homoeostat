@@ -330,4 +330,31 @@ $$\Delta_{13} \equiv 1 \pmod{13} \quad \text{и} \quad \Delta_{13} \equiv 13 \pm
 * **Макро-Сингулярность 157:** Сборка запрещенного 12-го проективного порядка ($N(12) = 12^2 + 12 + 1 = 157$) реализуется через суперпозицию вавилонского базиса ($60$), макро-шага ($84$) и ядра неразрешимости — простого модуля $13$:
   $$\mathbf{60} + \mathbf{84} + \mathbf{13} = \mathbf{157}$$
   Инверсия поля $\mathbb{F}_2$ (срез $60.84 / 2$) мгновенно выделяет управляющие маркеры $30.42$. В точке $157$ происходит мгновенный коллапс ранга матрицы инцидентности до $1$ бита, отправляя систему через три такта («дня») анабиоза к прорыву модуля $\mathbb{F}_{13}$.
+A COMBINATORIAL MODEL OF TIME: HOW THE ARROW OF TIME EMERGES FROM PERMUTATIONS
+This model does not assume a pre-existing time axis, background space, or physical postulates. There are only finite sets and the probabilities of their permutations. Everything else—the direction of time, state logic, and cycles—emerges as an inevitable statistical consequence of counting combinations.
+1. The Core Principle: Noise vs. Memory
+Take a finite set of n elements and shuffle it in all possible ways (n! total arrangements):
+• Noise (complete derangements): No element remains in its original position. If nothing is preserved, no change can be registered—time does not exist.
+• Memory (non-derangements): At least one element remains in its original position. This is the elementary act of registration: "was -> remained."
+As the number of elements grows, the share of pure noise approaches 1/e (about 36.8%), while the share of memory approaches 63.2%.
+2. Why Everything Starts at Numbers 3 and 4
+Counting permutations for small numbers can be done on your fingers:
+• Three elements (6 total arrangements): 2 pure noise arrangements (the only even prime number, defining the basic binary bit: "no memory / memory") and 4 memory arrangements.
+• Four elements (24 total arrangements): 9 pure noise arrangements and 15 memory arrangements.
+The pair (3, 4) is the only place in the entire sequence of natural numbers where three identities hold simultaneously:
+• The gain in memory equals the sum of noise: 15 - 4 = 2 + 9 = 11 (the transition quantum).
+• The volume of four divides cleanly by the noise of three: 24 / 2 = 3 x 4 = 12 (the basic clock cycle).
+• The sum of memory across the first four levels: 1 + 1 + 4 + 15 = 21 (the total number of flags in the Fano plane).
+Starting at 5 elements, the permutation group loses its internal normal subgroups, and the assembly window closes.
+3. Where the Arrow of Time Comes From Despite Full Reversibility
+At the level of all permutations, the system is completely reversible: every permutation can be inverted, and an external observer sees a full balance of transitions between 3 and 4.
+However, an internal observer—who is part of the continuous chain of surviving memory—encounters a probabilistic scale asymmetry:
+• During expansion (from 3 to 4), memory survives in 13 out of 16 cases.
+• During contraction (from 4 to 3), memory survives in 13 out of 15 cases, while the remaining configurations flow through the pure noise channel.
+Because 13/16 does not equal 13/15, the forward and backward steps do not cancel out. Over one full cycle (3 -> 4 -> 3), an irreducible informational shift of approximately +0.4413 nats appears. The arrow of time is not an external law of nature, but a statistical tax on changing scale when counting probabilities.
+4. The Clock Register: 7 States and the Reset at 13
+To encode 15 memory states without errors in a binary alphabet, error-correcting coding theory (the Hamming bound) requires adding 3 parity check bits to 4 information bits:
+• 4 + 3 = 7 bits per clock tick.
+• The syndrome check cube has 8 states: one zero state (void/noise) and 7 active states (a seven-valued logic of time, matching the 7 points of the Fano plane).
+• The 11 - 12 - 13 cycle: The system runs on a 12-tick lock (3 x 4 = 12) with a +11 shift until step 13, where it hits the prime number 13—which is divisible by neither 3 nor 4—triggering a reset and starting a new cycle.
 
