@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this codebase, routing codebook, or theoretical framework in your research or engineering, please cite it using the metadata below."
+title: "Quasi-Projective Dynamic Topology on 157 Nodes: 4-Phase Cyclic Difference Cover (k = 13) and O(1) ALU-Free Routing"
+version: 3.0.0
+date-released: 2026-11-16
+doi: 10.5281/zenodo.24171129
+url: "https://github.com<ваш-никнейм>/<имя-репозитория>"
+repository-code: "https://github.com<ваш-никнейм>/<имя-репозитория>"
+license: MIT
+
+authors:
+  - family-names: "Mokhov"
+    given-names: "<Ваше полное имя, например: Aleksandr>"
+    orcid: "https://orcid.org<0000-0000-0000-0000>"
+
+keywords:
+  - "quasi-projective topology"
+  - "cyclic difference cover"
+  - "TDMA scheduling"
+  - "O(1) routing"
+  - "Fano plane"
+  - "octonion algebra"
+  - "derangements"
+  - "ALU-free architecture"
+
+preferred-citation:
+  type: article
+  title: "Modular Invariants of the Exceptional Series (3,4,5,7), Combinatorial Derangement Defects, and Projective Embeddings of the Fano Plane"
+  authors:
+    - family-names: "Mokhov"
+      given-names: "<Ваше полное имя, например: Aleksandr>"
+      orcid: "https://orcid.org<0000-0000-0000-0000>"
+  doi: 10.5281/zenodo.24171129
+  year: 2026
+  publisher:
+    name: "Zenodo"
