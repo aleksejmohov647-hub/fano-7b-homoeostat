@@ -6,8 +6,6 @@ on:
     paths:
       - '**.lean'
       - '.github/workflows/lean_verify.yml'
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -18,9 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Elan & Lean 4
-        run: |
-          curl -sSf https://githubusercontent.com | sh -s -- -y --default-toolchain leanprover/lean4:stable
+      - name: Setup Lean 4
+        uses: leanprover/lean-action@v1
+        with:
+          toolchain: leanprover/lean4:stable
 
       - name: Audit for 'sorry' or custom axioms
         run: |
@@ -33,5 +32,5 @@ jobs:
         run: |
           for f in $(find . -name "*.lean"); do
             echo "Verifying $f ..."
-            "$HOME/.elan/bin/lean" "$f"
+            lean "$f"
           done
