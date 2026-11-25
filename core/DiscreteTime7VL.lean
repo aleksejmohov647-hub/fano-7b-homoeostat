@@ -22,7 +22,7 @@ def delta (n : Nat) : Nat := fact n - sub n
 
 /-- Auxiliary divisibility predicate (no Mathlib required) -/
 def isPrime (p : Nat) : Prop :=
-  p ≥ 2 ∧ ∀ d : Nat, Nat.dvd d p → d = 1 ∨ d = p
+  p ≥ 2 ∧ ∀ d : Nat, (∃ k : Nat, p = d * k) → d = 1 ∨ d = p
 
 /-! ### 1. Exact Recurrences and Growth Bounds -/
 
@@ -156,7 +156,7 @@ theorem uniqueness_prime_subfactorial (n : Nat) :
     | 3 => rfl
     | k + 4 =>
       have hfac : sub (k + 4) = (k + 3) * (sub (k + 3) + sub (k + 2)) := rfl
-      have hd_dvd : Nat.dvd (k + 3) (sub (k + 4)) := ⟨sub (k + 3) + sub (k + 2), hfac⟩
+      have hd_dvd : ∃ m : Nat, sub (k + 4) = (k + 3) * m := ⟨sub (k + 3) + sub (k + 2), hfac⟩
       have hor := hdiv (k + 3) hd_dvd
       cases hor with
       | inl h1 => omega
@@ -168,15 +168,21 @@ theorem uniqueness_prime_subfactorial (n : Nat) :
         omega
   · intro h
     subst h
-    refine ⟨by decide, fun d hd => ?_⟩
-    have hle : d ≤ 2 := Nat.le_of_dvd (by decide) hd
+    refine ⟨by decide, fun d ⟨m, hm⟩ => ?_⟩
+    have hsub3 : sub 3 = 2 := rfl
+    rw [hsub3] at hm
     match d with
-    | 0 =>
-      rcases hd with ⟨m, hm⟩
-      simp at hm
+    | 0 => simp at hm
     | 1 => exact Or.inl rfl
     | 2 => exact Or.inr rfl
-    | d + 3 => omega
+    | d + 3 =>
+      cases m with
+      | zero => simp at hm
+      | succ m' =>
+        have hge : (d + 3) * (m' + 1) ≥ 3 := by
+          have : (d + 3) * (m' + 1) ≥ 3 * 1 := Nat.mul_le_mul (by omega) (by omega)
+          omega
+        omega
 
 /-! ### 3. Corollary 3.1 & Theorem 4.1: Combinatorial & Rational Invariants -/
 
@@ -211,4 +217,3 @@ theorem flagLe_not_antisymm :
 theorem pendulum_asymmetry_cross : 13 * 16 > 13 * 15 := by decide
 
 end DiscreteTime7VL
- 
