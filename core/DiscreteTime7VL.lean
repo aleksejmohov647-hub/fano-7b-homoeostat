@@ -52,7 +52,7 @@ theorem sub_ge_two_of_ge_three : ∀ n : Nat, sub (n + 3) ≥ 2
   | 1 => by decide
   | n + 2 => by
     have ih : sub (n + 4) ≥ 2 := sub_ge_two_of_ge_three (n + 1)
-    have hrec : sub (n + 5) = (n + 4) * (sub (n + 4) + sub (n + 3)) := by simp [sub]
+    have hrec : sub (n + 2 + 3) = (n + 4) * (sub (n + 4) + sub (n + 3)) := by simp [sub]
     have hmul : (n + 4) * (sub (n + 4) + sub (n + 3)) ≥ 1 * (sub (n + 4) + sub (n + 3)) :=
       Nat.mul_le_mul_right _ (by omega)
     omega
@@ -88,12 +88,10 @@ theorem delta_gt_succ_of_ge_four : ∀ n : Nat, n ≥ 4 → delta n > n + 1
   | n + 6, _ => by
     have ih1 : delta (n + 5) > n + 6 := delta_gt_succ_of_ge_four (n + 5) (by omega)
     have ih2 : delta (n + 4) > n + 5 := delta_gt_succ_of_ge_four (n + 4) (by omega)
-       have hrec := delta_recurrence (n + 4)
+    have hrec : delta (n + 6) = (n + 5) * (delta (n + 5) + delta (n + 4)) := delta_recurrence (n + 4)
     have hmul : (n + 5) * (delta (n + 5) + delta (n + 4)) ≥ 1 * (delta (n + 5) + delta (n + 4)) :=
       Nat.mul_le_mul_right _ (by omega)
-    have h6 : delta (n + 6) = (n + 5) * (delta (n + 5) + delta (n + 4)) := hrec
     omega
-
 
 /-! ### 2. Theorem 2.2: Uniqueness of the n = 3 Saturation Root -/
 
