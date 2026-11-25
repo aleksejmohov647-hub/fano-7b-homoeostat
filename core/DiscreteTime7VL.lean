@@ -38,7 +38,8 @@ theorem sub_add_succ_le_fact : ∀ n : Nat, sub (n + 1) + sub n ≤ fact (n + 1)
         ≤ (k + 1) * fact (k + 1) + fact (k + 1) :=
           Nat.add_le_add (Nat.mul_le_mul_left (k + 1) ih) hk
       _ = (k + 2) * fact (k + 1) := by
-          omega
+                    rw [Nat.add_mul, Nat.one_mul]
+
       _ = fact (k + 2) := by
           simp [fact]
 
