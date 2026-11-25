@@ -5,41 +5,33 @@ on:
     branches: [ main ]
     paths:
       - '**.lean'
-      - 'lean-toolchain'
-      - 'lakefile.*'
       - '.github/workflows/lean_verify.yml'
   pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  verify-lean:
+  verify:
     name: Build & Check Zero-Sorry
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Elan & Lean 4
         run: |
-          curl https://githubusercontent.com -sSf | sh -s -- -y --default-toolchain leanprover/lean4:stable
-          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          curl -sSf https://githubusercontent.com | sh -s -- -y --default-toolchain leanprover/lean4:stable
 
       - name: Audit for 'sorry' or custom axioms
         run: |
           if grep -rnE '\bsorry\b|\baxiom\b' --include="*.lean" .; then
-            echo "❌ Error: Found 'sorry' or custom 'axiom' in Lean files!"
+            echo "Error: Found 'sorry' or custom 'axiom' in Lean files!"
             exit 1
-          else
-            echo "✅ Zero sorry and zero custom axioms confirmed."
           fi
 
       - name: Compile all standalone Lean 4 files
         run: |
-          set -e
-          for file in $(find . -name "*.lean" -not -path "./.lake/*"); do
-            echo "🔍 Verifying $file ..."
-            lean "$file"
-            echo "✅ Passed: $file"
+          for f in $(find . -name "*.lean"); do
+            echo "Verifying $f ..."
+            "$HOME/.elan/bin/lean" "$f"
           done
