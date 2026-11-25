@@ -88,10 +88,12 @@ theorem delta_gt_succ_of_ge_four : ∀ n : Nat, n ≥ 4 → delta n > n + 1
   | n + 6, _ => by
     have ih1 : delta (n + 5) > n + 6 := delta_gt_succ_of_ge_four (n + 5) (by omega)
     have ih2 : delta (n + 4) > n + 5 := delta_gt_succ_of_ge_four (n + 4) (by omega)
-    rw [delta_recurrence (n + 4)]
+       have hrec := delta_recurrence (n + 4)
     have hmul : (n + 5) * (delta (n + 5) + delta (n + 4)) ≥ 1 * (delta (n + 5) + delta (n + 4)) :=
       Nat.mul_le_mul_right _ (by omega)
+    have h6 : delta (n + 6) = (n + 5) * (delta (n + 5) + delta (n + 4)) := hrec
     omega
+
 
 /-! ### 2. Theorem 2.2: Uniqueness of the n = 3 Saturation Root -/
 
