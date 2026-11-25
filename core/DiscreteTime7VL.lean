@@ -112,7 +112,7 @@ theorem delta_jump_gt_threshold : ∀ n : Nat, n ≥ 4 → delta (n + 1) - delta
     have hb5 : delta (n + 5) > n + 6 := delta_gt_succ_of_ge_four (n + 5) (by omega)
     have hb4 : delta (n + 4) > n + 5 := delta_gt_succ_of_ge_four (n + 4) (by omega)
     have h1 : (n + 4) * delta (n + 5) ≥ (n + 4) * (n + 7) := Nat.mul_le_mul_left _ hb5
-    have h2 : (n + 5) * delta (n + 4) ≥ (n + 5) * (n + 6) := Nat.mul_le_mul_left _ hb4
+    have h2 : (n + 5) * delta (n + 4) ≥ (n + 5) * (n + 5 + 1) := Nat.mul_le_mul_left _ hb4
     have hexp : (n + 5) * (delta (n + 5) + delta (n + 4)) - delta (n + 5)
         = (n + 4) * delta (n + 5) + (n + 5) * delta (n + 4) := by
       have : (n + 5) * (delta (n + 5) + delta (n + 4))
