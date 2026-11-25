@@ -16,11 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Elan & Lean 4
+      - name: Install Lean 4
         run: |
-          wget -q https://githubusercontent.com -O /tmp/elan-init.sh
-          sh /tmp/elan-init.sh -y --default-toolchain leanprover/lean4:stable
-          /home/runner/.elan/bin/lean --version
+          curl -L https://github.com -o /tmp/lean.tar.zst
+          tar -xf /tmp/lean.tar.zst -C /tmp
+          /tmp/lean-4.14.0-linux/bin/lean --version
 
       - name: Audit for 'sorry' or custom axioms
         run: |
@@ -33,5 +33,5 @@ jobs:
         run: |
           for f in $(find . -name "*.lean"); do
             echo "Verifying $f ..."
-            /home/runner/.elan/bin/lean "$f"
+            /tmp/lean-4.14.0-linux/bin/lean "$f"
           done
