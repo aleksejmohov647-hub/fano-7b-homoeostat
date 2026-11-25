@@ -45,7 +45,7 @@ theorem asymmetry_quantum_numerator : 3 * 15 - 2 * 16 = 13 := by decide
 theorem asymmetry_quantum_denominator : 16 * 15 = 240 := by decide
 
 -- 3. Семизначная квазигруппа Штейнера на ненулевых точках PG(2,2) = {1..7}
-def FanoPoint := Fin 7
+abbrev FanoPoint := Fin 7
 
 /-- Операция Штейнера: e_i * e_j = e_k (через XOR над F_2^3 \ {0}) -/
 def steinerOp (a b : FanoPoint) : FanoPoint :=
@@ -56,15 +56,26 @@ def steinerOp (a b : FanoPoint) : FanoPoint :=
 
 /-- Доказательство коммутативности на всех 49 парах плоскости Фано -/
 theorem steiner_commutative : ∀ a b : FanoPoint, steinerOp a b = steinerOp b a := by
+  intro ⟨a, ha⟩ ⟨b, hb⟩
+  revert a b
   decide
 
 /-- Доказательство идемпотентности: x * x = x -/
 theorem steiner_idempotent : ∀ a : FanoPoint, steinerOp a a = a := by
+  intro ⟨a, ha⟩
+  revert a
+  decide
+
+/-- Доказательство инволютивности: x * (x * y) = y -/
+theorem steiner_involutive : ∀ a b : FanoPoint, steinerOp a (steinerOp a b) = b := by
+  intro ⟨a, ha⟩ ⟨b, hb⟩
+  revert a b
   decide
 
 /-- Доказательство строгой замкнутости без выхода в нулевой синдром -/
 theorem steiner_closed_nonzero : ∀ a b : FanoPoint, (steinerOp a b).val < 7 := by
-  decide
+  intro a b
+  exact (steinerOp a b).isLt
 
 -- 4. Стратификация 21 флага PG(2,2) под стабилизатором линии S_4
 /-- 21 флаг расщепляется ровно на 3 + 6 + 12 (и совпадает с суммой Δ₁ + Δ₂ + Δ₃ + Δ₄) -/
