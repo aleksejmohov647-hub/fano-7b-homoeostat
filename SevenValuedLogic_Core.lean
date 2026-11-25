@@ -1,7 +1,7 @@
 /-
   Seven-Valued Logic of Time (7VL) — Verified Combinatorial & Fano Core
   Author: Alex Mokhov
-  Standalone Lean 4 (Init only, zero external axioms, zero sorry)
+  Standalone Lean 4 (Init only, zero external axioms)
 -/
 
 namespace SevenValuedLogic
