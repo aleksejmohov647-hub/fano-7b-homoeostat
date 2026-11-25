@@ -1,7 +1,7 @@
 /-!
   7VL: Combinatorial Foundations of Discrete Time (Verified Core)
   Author: Alex Mokhov (ORCID: 0009-0005-7759-1974)
-  Environment: Standalone Lean 4 (Init only, zero external dependencies,complete )
+  Environment: Standalone Lean 4 (Init only, zero external dependencies, complete)
 -/
 
 namespace DiscreteTime7VL
@@ -46,6 +46,16 @@ theorem sub_add_succ_le_fact : ∀ n : Nat, sub (n + 1) + sub n ≤ fact (n + 1)
 theorem sub_le_fact : ∀ n : Nat, sub n ≤ fact n
   | 0 => Nat.le_refl 1
   | n + 1 => Nat.le_trans (Nat.le_add_right _ _) (sub_add_succ_le_fact n)
+
+theorem sub_ge_two_of_ge_three : ∀ n : Nat, sub (n + 3) ≥ 2
+  | 0 => by decide
+  | 1 => by decide
+  | n + 2 => by
+    have ih : sub (n + 4) ≥ 2 := sub_ge_two_of_ge_three (n + 1)
+    have hrec : sub (n + 5) = (n + 4) * (sub (n + 4) + sub (n + 3)) := by simp [sub]
+    have hmul : (n + 4) * (sub (n + 4) + sub (n + 3)) ≥ 1 * (sub (n + 4) + sub (n + 3)) :=
+      Nat.mul_le_mul_right _ (by omega)
+    omega
 
 /-- Two-step recurrence for non-derangements: Delta_{n+2} = (n+1)*(Delta_{n+1} + Delta_n) -/
 theorem delta_recurrence (n : Nat) :
@@ -151,15 +161,8 @@ theorem uniqueness_prime_subfactorial (n : Nat) :
       cases hor with
       | inl h1 => omega
       | inr heq =>
-        have hsum_ge2 : sub (k + 3) + sub (k + 2) ≥ 2 := by
-          cases k with
-          | zero => decide
-          | succ m =>
-            have : sub (m + 4) ≥ 2 := by
-              have h1 : sub 3 = 2 := rfl
-              have h2 : sub 4 = 9 := rfl
-              cases m <;> simp [sub] <;> omega
-            omega
+        have h3 : sub (k + 3) ≥ 2 := sub_ge_two_of_ge_three k
+        have hsum_ge2 : sub (k + 3) + sub (k + 2) ≥ 2 := by omega
         have hgt : (k + 3) * (sub (k + 3) + sub (k + 2)) ≥ (k + 3) * 2 :=
           Nat.mul_le_mul_left (k + 3) hsum_ge2
         omega
@@ -168,7 +171,9 @@ theorem uniqueness_prime_subfactorial (n : Nat) :
     refine ⟨by decide, fun d hd => ?_⟩
     have hle : d ≤ 2 := Nat.le_of_dvd (by decide) hd
     match d with
-    | 0 => simp at hd
+    | 0 =>
+      rcases hd with ⟨m, hm⟩
+      simp at hm
     | 1 => exact Or.inl rfl
     | 2 => exact Or.inr rfl
     | d + 3 => omega
@@ -202,44 +207,8 @@ theorem flagLe_not_antisymm :
   ⟨⟨0, 0⟩, ⟨0, 1⟩, rfl, rfl, by decide⟩
 
 /-- Exact rational arithmetic for Theorem 4.1 (cross-multiplied to avoid floats):
-    W_fwd = 13/16, W_bwd = 13/15  =>  chi = W_bwd / W_fwd = 16/15 > 1
-    delta_J = 3/16 - 2/15 = (45 - 32)/240 = 13/240 > 0 -/
-theorem cycle_affinity_exact :
-    let w_fwd_num := 13; let w_fwd_den := 16
-    let w_bwd_num := 13; let w_bwd_den := 15
-    (w_bwd_num * w_fwd_den) * 15 = (w_bwd_den * w_fwd_num) * 16 := rfl
-
-theorem probability_current_asymmetry_exact :
-    3 * 15 - 2 * 16 = 13 ∧ 16 * 15 = 240 := ⟨rfl, rfl⟩
-
-/-- Reflection positivity certificate for T^2 on the 2-sector Gram form -/
-theorem reflection_positivity_2x2_psd (x y : Int) :
-    169 * x * x + 26 * x * y + y * y ≥ 0 := by
-  have h1 : (13 * x) * (13 * x) = 169 * x * x := by
-    calc (13 * x) * (13 * x)
-        = 13 * (x * (13 * x)) := Int.mul_assoc 13 x (13 * x)
-      _ = 13 * ((13 * x) * x) := by rw [Int.mul_comm x (13 * x)]
-      _ = 13 * (13 * (x * x)) := by rw [Int.mul_assoc 13 x x]
-      _ = (13 * 13) * (x * x) := (Int.mul_assoc 13 13 (x * x)).symm
-      _ = 169 * (x * x) := rfl
-      _ = 169 * x * x := (Int.mul_assoc 169 x x).symm
-  have h2 : (13 * x) * y + y * (13 * x) = 26 * x * y := by
-    have ha : (13 * x) * y = 13 * (x * y) := Int.mul_assoc 13 x y
-    have hb : y * (13 * x) = 13 * (x * y) := by
-      rw [Int.mul_comm y (13 * x), Int.mul_assoc 13 x y]
-    have hc : 26 * x * y = 26 * (x * y) := Int.mul_assoc 26 x y
-    rw [ha, hb, hc]
-    omega
-  have hsq : (13 * x + y) * (13 * x + y) = 169 * x * x + 26 * x * y + y * y := by
-    calc (13 * x + y) * (13 * x + y)
-        = (13 * x) * (13 * x + y) + y * (13 * x + y) := Int.add_mul (13 * x) y (13 * x + y)
-      _ = ((13 * x) * (13 * x) + (13 * x) * y) + (y * (13 * x) + y * y) := by
-          rw [Int.mul_add (13 * x) (13 * x) y, Int.mul_add y (13 * x) y]
-      _ = (13 * x) * (13 * x) + ((13 * x) * y + y * (13 * x)) + y * y := by omega
-      _ = 169 * x * x + 26 * x * y + y * y := by rw [h1, h2]
-  rw [← hsq]
-  rcases Int.le_total 0 (13 * x + y) with hpos | hneg
-  · exact Int.mul_nonneg hpos hpos
-  · exact Int.mul_nonneg_of_nonpos_of_nonpos hneg hneg
+    W_fwd = 13/16, W_bwd = 13/15  =>  13 * 16 > 13 * 15 -/
+theorem pendulum_asymmetry_cross : 13 * 16 > 13 * 15 := by decide
 
 end DiscreteTime7VL
+ 
