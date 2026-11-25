@@ -18,7 +18,7 @@ jobs:
 
       - name: Install Lean 4
         run: |
-          curl -fL https://github.com /leanprover/lean4/releases/download/v4.14.0/lean-4.14.0-linux.tar.zst
+          curl -fL https://github.com/leanprover/lean4/releases/download/v4.14.0/lean-4.14.0-linux.tar.zst
 -o /tmp/lean.tar.zst
           tar -xf /tmp/lean.tar.zst -C /tmp
           /tmp/lean-4.14.0-linux/bin/lean --version
