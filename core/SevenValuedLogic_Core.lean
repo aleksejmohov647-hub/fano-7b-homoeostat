@@ -30,7 +30,7 @@ theorem pendulum_asymmetry_cross : 13 * 16 > 13 * 15 := by decide
 theorem asymmetry_quantum_numerator : 3 * 15 - 2 * 16 = 13 := by decide
 theorem asymmetry_quantum_denominator : 16 * 15 = 240 := by decide
 
-def FanoPoint := Fin 7
+abbrev FanoPoint := Fin 7
 
 def steinerOp (a b : FanoPoint) : FanoPoint :=
   let va := a.val + 1
@@ -39,12 +39,34 @@ def steinerOp (a b : FanoPoint) : FanoPoint :=
   ⟨(res - 1) % 7, Nat.mod_lt _ (by decide)⟩
 
 theorem steiner_commutative : ∀ a b : FanoPoint, steinerOp a b = steinerOp b a := by
+  intro ⟨a, ha⟩ ⟨b, hb⟩
+  revert a b
   decide
 
 theorem steiner_idempotent : ∀ a : FanoPoint, steinerOp a a = a := by
+  intro ⟨a, ha⟩
+  revert a
+  decide
+
+theorem steiner_involutive : ∀ a b : FanoPoint, steinerOp a (steinerOp a b) = b := by
+  intro ⟨a, ha⟩ ⟨b, hb⟩
+  revert a b
   decide
 
 theorem steiner_closed_nonzero : ∀ a b : FanoPoint, (steinerOp a b).val < 7 := by
+  intro a b
+  exact (steinerOp a b).isLt
+
+def isFanoLine (a b c : FanoPoint) : Bool :=
+  a != b && b != c && a != c && (steinerOp a b == c)
+
+def fanoLines : List (FanoPoint × FanoPoint × FanoPoint) :=
+  [ (0, 1, 2), (0, 3, 4), (0, 5, 6),
+    (1, 3, 5), (1, 4, 6), (2, 3, 6), (2, 4, 5) ]
+
+theorem fano_seven_lines_valid :
+    fanoLines.length = 7 ∧
+    fanoLines.all (fun (a, b, c) => isFanoLine a b c) = true := by
   decide
 
 theorem fano_21_flag_decomposition :
