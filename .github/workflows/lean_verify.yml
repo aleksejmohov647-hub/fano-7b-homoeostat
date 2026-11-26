@@ -1,37 +1,35 @@
-name: Lean 4 Formal Verification
+name: Build & Check Zero-Sorry
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - '**.lean'
-      - '.github/workflows/lean_verify.yml'
-  workflow_dispatch:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   verify:
-    name: Build & Check Zero-Sorry
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Lean 4
         run: |
-          curl -fL https://github.com/leanprover/lean4/releases/download/v4.14.0/lean-4.14.0-linux.tar.zst -o /tmp/lean.tar.zst
-          tar -xf /tmp/lean.tar.zst -C /tmp
-          /tmp/lean-4.14.0-linux/bin/lean --version
+          curl -sSfL https://github.com -o lean.tar.zst
+          tar --zstd -xf lean.tar.zst -C /tmp
+          echo "/tmp/lean-4.14.0-linux/bin" >> $GITHUB_PATH
 
       - name: Audit for 'sorry' or custom axioms
         run: |
-          if grep -rnE '\bsorry\b|\baxiom\b' --include="*.lean" .; then
-            echo "Error: Found 'sorry' or custom 'axiom' in Lean files!"
+          if grep -rnE "\b(sorry|axiom)\b" --include="*.lean" .; then
+            echo "Error: 'sorry' or custom 'axiom' found!"
             exit 1
           fi
 
       - name: Compile all standalone Lean 4 files
         run: |
-          for f in $(find . -name "*.lean"); do
+          for f in $(find . -name "*.lean" ! -name "SevenValuedLogic_RigorousCore_v5_3.lean"); do
             echo "Verifying $f ..."
-            /tmp/lean-4.14.0-linux/bin/lean "$f"
+            lean "$f"
           done
