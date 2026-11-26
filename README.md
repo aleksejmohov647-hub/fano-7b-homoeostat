@@ -73,3 +73,83 @@ If you use the formal proofs, lattice weights, or RTL architectures from this re
   url          = {https://doi.org}
 }
 ```
+# 7VL: Combinatorial Foundations of Discrete Time & Fano Plane PG(2,2)
+
+[![Lean 4 Verification](https://github.com)](https://github.com)
+[![DOI](https://zenodo.org)](https://doi.org)
+[![ORCID](https://shields.io)](https://orcid.org)
+
+Formal verification artifacts (standalone **Lean 4**, `Init` only, zero external dependencies, zero `sorry`), Python numerical benchmarks, and synthesizable SystemVerilog RTL cores for the **Seven-Valued Logic of Time (7VL)** discrete framework.
+
+---
+
+## Verified Mathematical Backbone (Tier I)
+
+All algebraic and combinatorial theorems below are formally machine-checked in `DiscreteTime7VL_UnifiedCore.lean`:
+
+* **Unique Saturation Root:** The permutation non-derangement recurrence $\Delta(n+1) - \Delta(n) = n(n+1) - 1$ ($\Delta_n = n! - \mathrm{sub}(n)$) admits the unique positive integer solution **$n = 3$** ($\Delta_4 - \Delta_3 = 15 - 4 = 11$), paired with the unique prime subfactorial **$\mathrm{sub}(3) = 2$**.
+* **Fano Flag Quasi-Order:** Fixing a vacuum line $\ell_0 \subset \mathrm{PG}(2,2)$ partitions the 21 incident point-line flags into $\mathrm{Stab}(\ell_0) \cong S_4$ orbits **$21 = 3 + 6 + 12$**, inducing a canonical 12-element quasi-order $(\mathcal{H}_{12}, \preceq)$ with $4 \times 3$ Pasch-complement fibers ($T_0 = |A_4| = 12$).
+* **Irreversible Markov Dynamics & Reflection Positivity:** An absorbing discrete-time Markov chain on $S_3 \sqcup S_4$ (19-state transient non-derangement core, $\Delta_3 + \Delta_4 = 19$) exhibits intrinsic detailed-balance violation $\chi = W_{\mathrm{bwd}} / W_{\mathrm{fwd}} = 16/15 > 1$, metric time quantum $\Delta\tau = \ln\left[\frac{7}{4}\left(\frac{15}{16}\right)^{11/6}\right] \approx 0.4413\text{ nat}$, and strict positive definiteness of $T^2$ in $L^2(\pi)$.
+* **Inverse Monoid Double Cover:** Lifting the unit group $S_4$ of the symmetric inverse monoid $I_4$ ($|I_4| = 209$) to the binary octahedral group $2O$ ($|2O| = 48$) yields a coherent double cover of cardinality **$|\tilde{I}_4| = 2 \cdot 209 - 1 = 417$**.
+
+---
+
+## Constructive Engineering Artifacts (Tier II)
+
+* **Exact 4th-Order Isotropic `(55, 9)` Stencil in $\mathbb{Z}^3$:** Superposition of two 24-vector shells $V_6 = \{(\pm 1, \pm 1, \pm 2)\}$ and $V_{10} = \{(\pm 3, \pm 1, 0)\}$ (corresponding to the two $A_4$-orbits in $2O$, $48 = 24 + 24$) with integer weights $(55, 9)$ restores continuous $\mathrm{SO}(3)$ isotropy up to fourth order directly on the cubic lattice without 4D FCHC projection.
+* **0-BRAM Genetic Code RTL Core (`fano_codon_core.sv`):** A 3-tick synthesizable SystemVerilog shift pipeline mapping the 64 codons ($V_4^3$) onto the 21 degeneracy classes ($2 \cdot 1 + 9 \cdot 2 + 2 \cdot 3 + 5 \cdot 4 + 3 \cdot 6 = 64$) without lookup tables.
+* **[[7,1,3]] Steane Code Dynamical Decoupling:** $A_4$-synchronized two-step decoupling protocol suppressing non-Markovian syndrome overflow ($7 < 11$).
+
+---
+
+## Repository Structure
+
+* `DiscreteTime7VL_UnifiedCore.lean` — Standalone Lean 4 formal proofs (`Init` only, zero `sorry`).
+* `fano_codon_core.sv` — Synthesizable SystemVerilog RTL module for the 3-tick codon automaton.
+* `scripts/` — Exhaustive Python verification scripts for Markov spectra, shell moments, and codon partitions.
+
+## Citation
+
+If you use these formal proofs or RTL cores, please cite the archived Zenodo release:
+
+> Mokhov, A. (2026). *Algebraic-combinatorial foundations of Markov dynamics on S₃ ⊔ S₄* (v5.3-UnifiedCore). Zenodo. https://doi.org
+# 7VL: Combinatorial Foundations of Discrete Time & Fano Plane PG(2,2)
+
+[![Lean 4 Verification](https://github.com)](https://github.com)
+[![DOI](https://zenodo.org)](https://doi.org)
+[![ORCID](https://shields.io)](https://orcid.org)
+
+Formal verification artifacts (standalone **Lean 4**, `Init` only, zero external dependencies, zero `sorry`), Python numerical benchmarks, and synthesizable SystemVerilog RTL cores for the **Seven-Valued Logic of Time (7VL)** discrete framework.
+
+---
+
+## Verified Mathematical Backbone (Tier I)
+
+All algebraic and combinatorial theorems below are formally machine-checked in `DiscreteTime7VL_UnifiedCore.lean`:
+
+* **Unique Saturation Root:** The permutation non-derangement recurrence $\Delta(n+1) - \Delta(n) = n(n+1) - 1$ ($\Delta_n = n! - \mathrm{sub}(n)$) admits the unique positive integer solution **$n = 3$** ($\Delta_4 - \Delta_3 = 15 - 4 = 11$), paired with the unique prime subfactorial **$\mathrm{sub}(3) = 2$**.
+* **Fano Flag Quasi-Order:** Fixing a vacuum line $\ell_0 \subset \mathrm{PG}(2,2)$ partitions the 21 incident point-line flags into $\mathrm{Stab}(\ell_0) \cong S_4$ orbits **$21 = 3 + 6 + 12$**, inducing a canonical 12-element quasi-order $(\mathcal{H}_{12}, \preceq)$ with $4 \times 3$ Pasch-complement fibers ($T_0 = |A_4| = 12$).
+* **Irreversible Markov Dynamics & Reflection Positivity:** An absorbing discrete-time Markov chain on $S_3 \sqcup S_4$ (19-state transient non-derangement core, $\Delta_3 + \Delta_4 = 19$) exhibits intrinsic detailed-balance violation $\chi = W_{\mathrm{bwd}} / W_{\mathrm{fwd}} = 16/15 > 1$, metric time quantum $\Delta\tau = \ln\left[\frac{7}{4}\left(\frac{15}{16}\right)^{11/6}\right] \approx 0.4413\text{ nat}$, and strict positive definiteness of $T^2$ in $L^2(\pi)$.
+* **Inverse Monoid Double Cover:** Lifting the unit group $S_4$ of the symmetric inverse monoid $I_4$ ($|I_4| = 209$) to the binary octahedral group $2O$ ($|2O| = 48$) yields a coherent double cover of cardinality **$|\tilde{I}_4| = 2 \cdot 209 - 1 = 417$**.
+
+---
+
+## Constructive Engineering Artifacts (Tier II)
+
+* **Exact 4th-Order Isotropic `(55, 9)` Stencil in $\mathbb{Z}^3$:** Superposition of two 24-vector shells $V_6 = \{(\pm 1, \pm 1, \pm 2)\}$ and $V_{10} = \{(\pm 3, \pm 1, 0)\}$ (corresponding to the two $A_4$-orbits in $2O$, $48 = 24 + 24$) with integer weights $(55, 9)$ restores continuous $\mathrm{SO}(3)$ isotropy up to fourth order directly on the cubic lattice without 4D FCHC projection.
+* **0-BRAM Genetic Code RTL Core (`fano_codon_core.sv`):** A 3-tick synthesizable SystemVerilog shift pipeline mapping the 64 codons ($V_4^3$) onto the 21 degeneracy classes ($2 \cdot 1 + 9 \cdot 2 + 2 \cdot 3 + 5 \cdot 4 + 3 \cdot 6 = 64$) without lookup tables.
+* **[[7,1,3]] Steane Code Dynamical Decoupling:** $A_4$-synchronized two-step decoupling protocol suppressing non-Markovian syndrome overflow ($7 < 11$).
+
+---
+
+## Repository Structure
+
+* `DiscreteTime7VL_UnifiedCore.lean` — Standalone Lean 4 formal proofs (`Init` only, zero `sorry`).
+* `fano_codon_core.sv` — Synthesizable SystemVerilog RTL module for the 3-tick codon automaton.
+* `scripts/` — Exhaustive Python verification scripts for Markov spectra, shell moments, and codon partitions.
+
+## Citation
+
+If you use these formal proofs or RTL cores, please cite the archived Zenodo release:
+
+> Mokhov, A. (2026). *Algebraic-combinatorial foundations of Markov dynamics on S₃ ⊔ S₄* (v5.3-UnifiedCore). Zenodo. https://doi.org
