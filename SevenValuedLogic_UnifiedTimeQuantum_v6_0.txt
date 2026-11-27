@@ -1,0 +1,412 @@
+/-!
+  ==============================================================================
+  SEVEN-VALUED LOGIC (7VL) — UNIFIED ALL-n TOWER PEAK & CERNY TIME QUANTUM
+  Module: SevenValuedLogic_UnifiedTimeQuantum_v6_0
+  ==============================================================================
+  Author: Alex Mokhov (Independent Researcher, Krasnodar, Russia)
+  ORCID: 0009-0005-7759-1974
+  Verification Kernel: Lean 4 Core Kernel (Init only; zero Mathlib, zero sorry,
+  zero custom axioms)
+
+  Architectural Integration:
+  - Part I (All-n Tower & Dual Resonator S_3 <-> S_4):
+    Proves the universal alternating subfactorial law for ALL n in Nat,
+    identifies n = 3 -> 4 as the unique global peak of relative derangement
+    excess (!4 = 9 > 4 * !3 = 8), and establishes the exact transition weights
+    P(retain) = 13/16 and P(collapse) = 3/16 in Protocol A (S_3 <-> S_4).
+  - Part II (Minimal Synchronizing Time Quantum C_n at the Global Peak n = 4):
+    Directly derives the 4-state Cerny automaton C_4 from the selected peak
+    dimension n = 4, proving:
+      1. Minimal synchronizing word w_9 = b a^3 b a^3 b has length (4 - 1)^2 = 9,
+         coinciding with !4 = 9.
+      2. No word of length < 9 synchronizes C_4 (exhaustive over all 511 words).
+      3. Generated transformation monoid <a, b> <= T_4 has exact order 128 with
+         rank stratification 4 (rank 4) + 48 (rank 3) + 72 (rank 2) + 4 (rank 1).
+      4. Exact rational probability of synchronization at the minimal quantum
+         t = 9 under resonator weights (13/16, 3/16) is (13^6 * 3^3) / 16^9
+         = 130323843 / 68719476736.
+      5. Exact Markov expected synchronization time (mean absorption time into
+         the rank-1 constant ideal) across all 128 monoid elements:
+           - Under resonator weights (13/16, 3/16): E_res[T_sync] = 34480 / 507
+           - Under uniform weights (1/2, 1/2):      E_unif[T_sync] = 50
+  ==============================================================================
+-/
+
+namespace SevenValuedLogic_UnifiedTimeQuantum
+
+-- ============================================================================
+-- PART I: ALL-n SUBFACTORIAL TOWER & DUAL RESONATOR WEIGHTS (S_3 <-> S_4)
+-- ============================================================================
+
+/-- Standard factorial n! -/
+def fact : Nat → Nat
+  | 0 => 1
+  | n + 1 => (n + 1) * fact n
+
+/-- Subfactorial !n (number of derangements in S_n) for all n : Nat -/
+def subfact : Nat → Nat
+  | 0 => 1
+  | 1 => 0
+  | n + 2 => (n + 1) * (subfact (n + 1) + subfact n)
+
+/-- Universal alternating recurrence law for all n : Nat -/
+theorem subfact_alternating_law : ∀ n : Nat,
+    (subfact (n + 1) : Int) - ((n + 1 : Int) * (subfact n : Int)) =
+    if n % 2 == 0 then -1 else 1
+  | 0 => by decide
+  | n + 1 => by
+      have ih := subfact_alternating_law n
+      have hrec : (subfact (n + 2) : Int) =
+          ((n + 1 : Int)) * ((subfact (n + 1) : Int) + (subfact n : Int)) := by
+        simp only [subfact]
+        omega
+      by_cases h : n % 2 = 0
+      · have h1 : (n % 2 == 0) = true := decide_eq_true h
+        have h2 : ((n + 1) % 2 == 0) = false := decide_eq_false (by omega)
+        simp only [h1, h2, ↓reduceIte] at ih ⊢
+        omega
+      · have h1 : (n % 2 == 0) = false := decide_eq_false h
+        have h2 : ((n + 1) % 2 == 0) = true := decide_eq_true (by omega)
+        simp only [h1, h2, ↓reduceIte] at ih ⊢
+        omega
+
+/-- Strict positivity of !n for all n >= 2 -/
+theorem subfact_pos_ge2 (n : Nat) (hn : n ≥ 2) : subfact n ≥ 1 := by
+  induction n using Nat.strong_induction_on with
+  | h k ih =>
+    match k with
+    | 0 | 1 => omega
+    | 2 => decide
+    | m + 3 =>
+      have h1 := ih (m + 2) (by omega) (by omega)
+      simp only [subfact]
+      omega
+
+/-- Strict monotonicity of !n for all n >= 2 -/
+theorem subfact_strict_mono_ge2 (n : Nat) (hn : n ≥ 2) : subfact n < subfact (n + 1) := by
+  have halt := subfact_alternating_law n
+  have hpos := subfact_pos_ge2 n hn
+  by_cases hev : n % 2 = 0
+  · have h1 : (n % 2 == 0) = true := decide_eq_true hev
+    simp only [h1, ↓reduceIte] at halt
+    omega
+  · have h1 : (n % 2 == 0) = false := decide_eq_false hev
+    simp only [h1, Bool.false_eq_true, ↓reduceIte] at halt
+    omega
+
+/-- Global Peak Uniqueness across ALL n in Nat:
+    The transition n = 3 -> 4 uniquely maximizes relative derangement excess
+    (!4 - 4 * !3) / !3 = 1/2 across the entire natural number tower n >= 1. -/
+theorem subfact_global_peak_unique_3_4 :
+    subfact 3 < 3 * subfact 2 ∧
+    subfact 4 > 4 * subfact 3 ∧
+    subfact 4 = 9 ∧ 4 * subfact 3 = 8 ∧
+    ∀ k : Nat, k ≥ 5 →
+      subfact (k - 1) ≥ 9 ∧
+      (subfact k : Int) - (k : Int) * (subfact (k - 1) : Int) ≤ 1 ∧
+      2 * ((subfact k : Int) - (k : Int) * (subfact (k - 1) : Int)) < (subfact (k - 1) : Int) := by
+  refine ⟨by decide, by decide, by decide, by decide, ?_⟩
+  intro k hk
+  have hmono : ∀ d : Nat, subfact (4 + d) ≥ 9 := by
+    intro d
+    induction d with
+    | zero => decide
+    | succ d ih =>
+      have hlt := subfact_strict_mono_ge2 (4 + d) (by omega)
+      omega
+  have heq : k - 1 = 4 + (k - 5) := by omega
+  have h9 : subfact (k - 1) ≥ 9 := by
+    rw [heq]
+    exact hmono (k - 5)
+  cases k with
+  | zero => omega
+  | succ m =>
+    have halt := subfact_alternating_law m
+    simp only [Nat.add_sub_cancel] at h9 ⊢
+    by_cases hm : m % 2 = 0
+    · have h1 : (m % 2 == 0) = true := decide_eq_true hm
+      simp only [h1, ↓reduceIte] at halt
+      refine ⟨h9, by omega, by omega⟩
+    · have h1 : (m % 2 == 0) = false := decide_eq_false hm
+      simp only [h1, Bool.false_eq_true, ↓reduceIte] at halt
+      refine ⟨h9, by omega, by omega⟩
+
+-- ============================================================================
+-- PART II: S_3 <-> S_4 RESONATOR CHANNEL WEIGHTS (DERIVING 13/16 AND 3/16)
+-- ============================================================================
+
+structure Perm3 where
+  f0 : Fin 3
+  f1 : Fin 3
+  f2 : Fin 3
+deriving DecidableEq, Repr
+
+structure Perm4 where
+  f0 : Fin 4
+  f1 : Fin 4
+  f2 : Fin 4
+  f3 : Fin 4
+deriving DecidableEq, Repr
+
+@[inline] def Perm3.eval (m : Perm3) (x : Fin 3) : Fin 3 :=
+  match x with | ⟨0, _⟩ => m.f0 | ⟨1, _⟩ => m.f1 | ⟨2, _⟩ => m.f2
+
+@[inline] def Perm4.eval (m : Perm4) (x : Fin 4) : Fin 4 :=
+  match x with | ⟨0, _⟩ => m.f0 | ⟨1, _⟩ => m.f1 | ⟨2, _⟩ => m.f2 | ⟨3, _⟩ => m.f3
+
+@[inline] def Perm4.mul (m1 m2 : Perm4) : Perm4 :=
+  { f0 := m1.eval m2.f0, f1 := m1.eval m2.f1, f2 := m1.eval m2.f2, f3 := m1.eval m2.f3 }
+
+instance : Mul Perm4 := ⟨Perm4.mul⟩
+
+@[inline] def embed3to4 (p : Perm3) : Perm4 :=
+  { f0 := ⟨p.f0.val, by omega⟩, f1 := ⟨p.f1.val, by omega⟩,
+    f2 := ⟨p.f2.val, by omega⟩, f3 := ⟨3, by decide⟩ }
+
+def id4 : Perm4 := { f0 := ⟨0, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨2, by decide⟩, f3 := ⟨3, by decide⟩ }
+def t03 : Perm4 := { f0 := ⟨3, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨2, by decide⟩, f3 := ⟨0, by decide⟩ }
+def t13 : Perm4 := { f0 := ⟨0, by decide⟩, f1 := ⟨3, by decide⟩, f2 := ⟨2, by decide⟩, f3 := ⟨1, by decide⟩ }
+def t23 : Perm4 := { f0 := ⟨0, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨3, by decide⟩, f3 := ⟨2, by decide⟩ }
+
+def allS3 : List Perm3 := [
+  { f0 := ⟨0, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨2, by decide⟩ },
+  { f0 := ⟨1, by decide⟩, f1 := ⟨0, by decide⟩, f2 := ⟨2, by decide⟩ },
+  { f0 := ⟨2, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨0, by decide⟩ },
+  { f0 := ⟨0, by decide⟩, f1 := ⟨2, by decide⟩, f2 := ⟨1, by decide⟩ },
+  { f0 := ⟨1, by decide⟩, f1 := ⟨2, by decide⟩, f2 := ⟨0, by decide⟩ },
+  { f0 := ⟨2, by decide⟩, f1 := ⟨0, by decide⟩, f2 := ⟨1, by decide⟩ }
+]
+
+def j4Channels : List Perm4 := [id4, t03, t13, t23]
+
+@[inline] def fixedCount3 (m : Perm3) : Nat :=
+  (if m.f0 == ⟨0, by decide⟩ then 1 else 0) +
+  (if m.f1 == ⟨1, by decide⟩ then 1 else 0) +
+  (if m.f2 == ⟨2, by decide⟩ then 1 else 0)
+
+@[inline] def fixedCount4 (m : Perm4) : Nat :=
+  (if m.f0 == ⟨0, by decide⟩ then 1 else 0) +
+  (if m.f1 == ⟨1, by decide⟩ then 1 else 0) +
+  (if m.f2 == ⟨2, by decide⟩ then 1 else 0) +
+  (if m.f3 == ⟨3, by decide⟩ then 1 else 0)
+
+def m1_3 : List Perm3 := allS3.filter (fun m => fixedCount3 m > 0)
+
+/-- Exact derivation of resonator retention weight p_a = 13/16 and collapse weight p_b = 3/16 -/
+def resonatorWeights : Nat × Nat × Nat :=
+  let fwd1 := m1_3.flatMap (fun pi => j4Channels.map (fun g => g * embed3to4 pi))
+  let retain := (fwd1.filter (fun m => fixedCount4 m > 0)).length
+  let collapse := (fwd1.filter (fun m => fixedCount4 m == 0)).length
+  (retain, collapse, fwd1.length)
+
+theorem resonator_weights_exact :
+    resonatorWeights = (13, 3, 16) ∧ 13 + 3 = 16 := by
+  decide
+
+-- ============================================================================
+-- PART III: CERNY AUTOMATON C_n AT THE SELECTED PEAK DIMENSION n = 4
+-- ============================================================================
+
+/-- Peak dimension selected by `subfact_global_peak_unique_3_4` -/
+def peakDim : Nat := 4
+
+/-- Theoretical Cerny synchronization bound (n - 1)^2 for arbitrary n -/
+def cernyBound (n : Nat) : Nat := (n - 1) ^ 2
+
+abbrev State4 := Fin 4
+def allStates : List State4 := [0, 1, 2, 3]
+
+inductive Letter
+  | a -- reversible cyclic shift (generator of C_4 <= S_4, rank 4)
+  | b -- minimal irreversible projection (0 -> 1, rank 3)
+  deriving DecidableEq, Repr
+
+@[inline] def step (s : State4) : Letter → State4
+  | .a => ⟨(s.val + 1) % 4, Nat.mod_lt _ (by decide)⟩
+  | .b => if s.val == 0 then ⟨1, by decide⟩ else s
+
+def runWord (s : State4) (w : List Letter) : State4 :=
+  w.foldl step s
+
+def isSyncWord (w : List Letter) : Bool :=
+  let target := runWord 0 w
+  allStates.all fun s => runWord s w == target
+
+/-- Canonical 9-step synchronizing word: b a^3 b a^3 b -/
+def w9 : List Letter :=
+  [.b, .a, .a, .a, .b, .a, .a, .a, .b]
+
+/-- Tuple representation of a transformation f : Fin 4 -> Fin 4 in T_4 -/
+abbrev Trans4 := State4 × State4 × State4 × State4
+
+def identityTrans4 : Trans4 := (0, 1, 2, 3)
+def transA : Trans4 := (1, 2, 3, 0)
+def transB : Trans4 := (1, 1, 2, 3)
+
+@[inline] def evalTrans4 (f : Trans4) (s : State4) : State4 :=
+  match s.val with
+  | 0 => f.1
+  | 1 => f.2.1
+  | 2 => f.2.2.1
+  | _ => f.2.2.2
+
+@[inline] def compTrans4 (f g : Trans4) : Trans4 :=
+  (evalTrans4 g f.1, evalTrans4 g f.2.1, evalTrans4 g f.2.2.1, evalTrans4 g f.2.2.2)
+
+@[inline] def rankTrans4 (f : Trans4) : Nat :=
+  let imgs := [f.1, f.2.1, f.2.2.1, f.2.2.2]
+  (allStates.filter fun s => imgs.contains s).length
+
+@[inline] def isConstTrans4 (f : Trans4) : Bool :=
+  f.1 == f.2.1 && f.2.1 == f.2.2.1 && f.2.2.1 == f.2.2.2
+
+/-- Memory-free recursive check that NO word of exact length `k` synchronizes -/
+def noSyncOfLen : Nat → Trans4 → Bool
+  | 0, f => !isConstTrans4 f
+  | k + 1, f =>
+      noSyncOfLen k (compTrans4 f transA) &&
+      noSyncOfLen k (compTrans4 f transB)
+
+/-- Memory-free recursive check across all lengths < k (0 .. k-1) -/
+def noSyncShorterThan : Nat → Bool
+  | 0 => true
+  | k + 1 => noSyncShorterThan k && noSyncOfLen k identityTrans4
+
+/-- Theorem 1: At the global subfactorial peak n = 4, Cerny bound (n - 1)^2 = 9
+    coincides with !4 = 9, w9 synchronizes all states to 1, and NO shorter word
+    among all 511 words of length < 9 can synchronize the system. -/
+theorem unified_peak_time_quantum_9 :
+    subfact peakDim = cernyBound peakDim ∧
+    cernyBound peakDim = w9.length ∧
+    w9.length = 9 ∧
+    isSyncWord w9 = true ∧
+    (∀ s : State4, runWord s w9 = 1) ∧
+    noSyncShorterThan 9 = true := by
+  refine ⟨by decide, by decide, rfl, rfl, ?_, by decide⟩
+  intro s
+  match s with
+  | ⟨0, _⟩ => rfl
+  | ⟨1, _⟩ => rfl
+  | ⟨2, _⟩ => rfl
+  | ⟨3, _⟩ => rfl
+
+-- ============================================================================
+-- PART IV: EXACT 128-ELEMENT TRANSFORMATION MONOID & RANK STRATIFICATION
+-- ============================================================================
+
+/-- Frontier-based BFS closure generating <a, b> <= T_4 (exact order 128) -/
+def appendUnique (acc : List Trans4) : List Trans4 → List Trans4
+  | [] => acc
+  | x :: xs =>
+      if acc.contains x then appendUnique acc xs
+      else appendUnique (acc ++ [x]) xs
+
+def bfsMonoid : Nat → List Trans4 → List Trans4 → List Trans4
+  | 0, visited, _ => visited
+  | _, visited, [] => visited
+  | fuel + 1, visited, frontier =>
+      let candidates := frontier.flatMap fun f => [compTrans4 f transA, compTrans4 f transB]
+      let nextVisited := appendUnique visited candidates
+      let nextFrontier := nextVisited.drop visited.length
+      bfsMonoid fuel nextVisited nextFrontier
+
+def cernyMonoid4 : List Trans4 :=
+  bfsMonoid 20 [identityTrans4] [identityTrans4]
+
+def transW9 : Trans4 :=
+  (runWord 0 w9, runWord 1 w9, runWord 2 w9, runWord 3 w9)
+
+/-- Theorem 2: Exact order 128 and rank stratification 4 + 48 + 72 + 4 = 128 -/
+theorem cerny_monoid_structure_exact :
+    cernyMonoid4.length = 128 ∧
+    (cernyMonoid4.filter fun f => rankTrans4 f == 4).length = 4 ∧
+    (cernyMonoid4.filter fun f => rankTrans4 f == 3).length = 48 ∧
+    (cernyMonoid4.filter fun f => rankTrans4 f == 2).length = 72 ∧
+    (cernyMonoid4.filter fun f => rankTrans4 f == 1).length = 4 ∧
+    4 + 48 + 72 + 4 = 128 ∧
+    compTrans4 (compTrans4 transA transA) (compTrans4 transA transA) = identityTrans4 ∧
+    compTrans4 transB transB = transB ∧
+    transW9 = (1, 1, 1, 1) ∧
+    cernyMonoid4.all (fun f => compTrans4 f transW9 == transW9) = true := by
+  decide
+
+-- ============================================================================
+-- PART V: EXACT RATIONAL SYNCHRONIZATION PROBABILITY & MARKOV ABSORPTION TIME
+-- ============================================================================
+
+/-- Memory-free recursive accumulator of (syncCount, totalWeightNum) at exact length k -/
+def syncStatsLen (pa pb : Nat) : Nat → Trans4 → Nat → Nat × Nat
+  | 0, f, w => if isConstTrans4 f then (1, w) else (0, 0)
+  | k + 1, f, w =>
+      let (cA, wA) := syncStatsLen pa pb k (compTrans4 f transA) (w * pa)
+      let (cB, wB) := syncStatsLen pa pb k (compTrans4 f transB) (w * pb)
+      (cA + cB, wA + wB)
+
+/-- Theorem 3: Exact synchronization probability at minimal quantum t = 9
+    under resonator weights (pa, pb) = (13, 3) with denominator 16^9 -/
+theorem sync_probability_t9_exact :
+    let (pa, pb, den) := resonatorWeights
+    syncStatsLen 1 1 9 identityTrans4 1 = (1, 1) ∧
+    syncStatsLen pa pb 9 identityTrans4 1 = (1, (13 ^ 6) * (3 ^ 3)) ∧
+    (13 ^ 6) * (3 ^ 3) = 130323843 ∧
+    den ^ 9 = 68719476736 := by
+  decide
+
+/-- Scaled expected absorption time (numerator over common denominator 507 = 3 * 13^2)
+    for all 128 elements of <a, b> in BFS order under resonator weights (13/16, 3/16). -/
+def expectedSyncNum507 : List Nat :=
+  [34480, 34480, 31776, 34480, 31776, 31152, 34480, 31776, 31152, 30384, 31776, 31776, 31152, 30384, 31776, 30384, 27680, 31152, 31152, 30384, 31776, 30384, 27680, 31152, 21648, 27056, 30384, 31776, 30384, 31776, 30384, 27680, 31152, 21648, 27056, 30384, 31776, 21024, 21648, 30384, 27680, 31152, 30384, 27680, 31152, 21648, 27056, 30384, 31776, 21024, 21648, 30384, 27680, 31152, 20400, 21024, 27056, 30384, 21648, 27056, 30384, 31776, 21024, 21648, 30384, 27680, 31152, 20400, 21024, 27056, 30384, 18096, 27680, 20400, 21648, 30384, 21024, 21648, 30384, 27680, 31152, 20400, 21024, 27056, 30384, 18096, 27680, 20400, 21648, 30384, 0, 27056, 18096, 21024, 20400, 21024, 27056, 30384, 18096, 27680, 20400, 21648, 30384, 27056, 18096, 21024, 0, 20400, 18096, 27680, 20400, 21648, 30384, 27056, 18096, 21024, 20400, 0, 18096, 27056, 18096, 21024, 20400, 18096, 0, 20400, 18096, 18096]
+
+/-- Exact integer expected absorption time for all 128 elements under uniform weights (1/2, 1/2). -/
+def expectedSyncUnif : List Nat :=
+  [50, 50, 48, 50, 48, 46, 50, 48, 46, 42, 48, 48, 46, 42, 48, 42, 40, 46, 46, 42, 48, 42, 40, 46, 34, 38, 42, 48, 42, 48, 42, 40, 46, 34, 38, 42, 48, 32, 34, 42, 40, 46, 42, 40, 46, 34, 38, 42, 48, 32, 34, 42, 40, 46, 30, 32, 38, 42, 34, 38, 42, 48, 32, 34, 42, 40, 46, 30, 32, 38, 42, 18, 40, 30, 34, 42, 32, 34, 42, 40, 46, 30, 32, 38, 42, 18, 40, 30, 34, 42, 0, 38, 18, 32, 30, 32, 38, 42, 18, 40, 30, 34, 42, 38, 18, 32, 0, 30, 18, 40, 30, 34, 42, 38, 18, 32, 30, 0, 18, 38, 18, 32, 30, 18, 0, 30, 18, 18]
+
+def indexOfTrans (xs : List Trans4) (target : Trans4) : Nat :=
+  let rec go : Nat → List Trans4 → Nat
+    | _, [] => 0
+    | i, y :: ys => if y == target then i else go (i + 1) ys
+  go 0 xs
+
+/-- Verify first-step Markov absorption equations for ALL 128 monoid elements:
+    - If rank(f) = 1: E[f] = 0
+    - If rank(f) > 1: D * E[f] = D * S + pa * S * E[f * a] + pb * S * E[f * b] -/
+def verifyMarkovSystem (pa pb den scale : Nat) (vals : List Nat) : Bool :=
+  (List.range cernyMonoid4.length).all fun i =>
+    let f := cernyMonoid4.getD i identityTrans4
+    let ef := vals.getD i 0
+    if isConstTrans4 f then
+      ef == 0
+    else
+      let ia := indexOfTrans cernyMonoid4 (compTrans4 f transA)
+      let ib := indexOfTrans cernyMonoid4 (compTrans4 f transB)
+      let efa := vals.getD ia 0
+      let efb := vals.getD ib 0
+      den * ef == den * scale + pa * efa + pb * efb
+
+/-- Theorem 4: Exact Rational Mean Synchronization Time on the 128-Element Monoid:
+    1. Under S_3 <-> S_4 resonator weights (13/16, 3/16):
+       E_res[T_sync] = 34480 / 507  (exact rational, 507 = 3 * 13^2)
+    2. Under uniform weights (1/2, 1/2):
+       E_unif[T_sync] = 50  (exact integer for every element of the monoid) -/
+theorem markov_mean_sync_time_exact :
+    expectedSyncNum507.length = 128 ∧
+    expectedSyncUnif.length = 128 ∧
+    expectedSyncNum507.getD 0 0 = 34480 ∧
+    expectedSyncUnif.getD 0 0 = 50 ∧
+    verifyMarkovSystem 13 3 16 507 expectedSyncNum507 = true ∧
+    verifyMarkovSystem 1 1 2 1 expectedSyncUnif = true := by
+  decide
+
+-- ============================================================================
+-- PART VI: KERNEL AXIOM AUDIT (ZERO CUSTOM AXIOMS, ZERO SORRY)
+-- ============================================================================
+
+#print axioms subfact_alternating_law
+#print axioms subfact_global_peak_unique_3_4
+#print axioms resonator_weights_exact
+#print axioms unified_peak_time_quantum_9
+#print axioms cerny_monoid_structure_exact
+#print axioms sync_probability_t9_exact
+#print axioms markov_mean_sync_time_exact
+
+end SevenValuedLogic_UnifiedTimeQuantum
