@@ -24,12 +24,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Audit for 'sorry' or custom axioms
+      - name: Find and verify Lean 4 files
         run: |
-          if grep -rnE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" SevenValuedLogic_UnifiedTimeQuantum_v6_0.lean; then
-            echo "Error: 'sorry' or custom 'axiom' found!"
+          FILES=$(find . -name "*.lean" -not -path "./.lake/*")
+          if [ -z "$FILES" ]; then
+            echo "Error: No .lean files found in repository!"
             exit 1
           fi
 
-      - name: Compile Lean 4 file
-        run: lean SevenValuedLogic_UnifiedTimeQuantum_v6_0.lean
+          for file in $FILES; do
+            echo "Checking $file..."
+            if grep -nE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" "$file"; then
+              echo "Error: 'sorry' or custom 'axiom' found in $file!"
+              exit 1
+            fi
+            lean "$file"
+          done
