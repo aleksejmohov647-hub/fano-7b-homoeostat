@@ -1,67 +1,46 @@
-name: "Fano Engine Verification"
+name: Build & Check Zero-Sorry
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
-
-permissions:
-  contents: write
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-  fano_core_job:
+  verify-lean:
+    name: Verify Lean 4 Certificates
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository code
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set up C++ Build Tools (GCC) and Tools
+      - name: Install Lean 4
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential
-
-      - name: Set up Python Environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Execute Macro-Scale Traffic Bridge
+          gh release download -R leanprover/lean4 -p "*linux.tar.zst" -O lean.tar.zst
+          tar -xf lean.tar.zst
+          mv lean-*-linux "$HOME/lean4"
+          echo "$HOME/lean4/bin" >> $GITHUB_PATH
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "[Макро] Запуск моста сбора внешнего тока отношений..."
-          python v2_macro/v2_macro/traffic_bridge.py
+          GH_TOKEN: ${{ github.token }}
 
-      - name: Compile and Run C++ Meso-Scale Mesh Tester
+      - name: Find and verify Lean 4 files
         run: |
-          echo "[Мезо] Компиляция высокоскоростного симулятора кристалла..."
-          g++ -O3 core/fano_mesh_tester.cpp -o core/fano_mesh_tester
-          echo "[Мезо] Запуск симулятора 3D-решетки под нагрузкой трафика..."
-          ./core/fano_mesh_tester
-
-      - name: Verify SystemVerilog Hardware RTL
-        run: |
-          echo "[Верификация] Проверка RTL описания..."
-
-      - name: Inject Crystal Slice Into README
-        run: |
-          if [ -f "v2_macro/v2_macro/inject_readme.py" ]; then
-            python v2_macro/v2_macro/inject_readme.py
-          else
-            echo "Скрипт inject_readme.py не найден, пропускаем."
+          FILES=$(find . -name "*.lean" -not -path "./.lake/*")
+          if [ -z "$FILES" ]; then
+            echo "Error: No .lean files found in repository!"
+            exit 1
           fi
 
-      - name: Safely Auto-Commit README Updates
-        run: |
-          git config --global user.name "7n-Gauge-Automaton"
-          git config --global user.email "automaton@7n.internal"
-          if [ -n "$(git status --porcelain README.md)" ]; then
-            git add README.md
-            git commit -m "docs: auto-update crystal specs in README [skip ci]"
-            git push origin main
-          else
-            echo "Изменений в README нет."
-          fi
+          COUNT=0
+          for file in $FILES; do
+            echo "Checking $file..."
+            if grep -nE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" "$file"; then
+              echo "Error: 'sorry' or custom 'axiom' found in $file!"
+              exit 1
+            fi
+            lean "$file"
+            COUNT=$((COUNT + 1))
+          done
+
+          echo "Successfully verified $COUNT Lean 4 file(s) with zero sorry/axioms."
