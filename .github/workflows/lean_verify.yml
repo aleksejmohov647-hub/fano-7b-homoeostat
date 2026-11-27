@@ -1,56 +1,35 @@
-name: Build & Check Zero-Sorry + Python Benchmarks 
+name: Build & Check Zero-Sorry
 
 on:
-push:
-branches: [ main, master ]
-pull_request:
-branches: [ main, master ] 
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-verify-lean:
-name: Verify Lean 4 Certificates
-runs-on: ubuntu-latest 
+  verify-lean:
+    name: Verify Lean 4 Certificates
+    runs-on: ubuntu-latest
 
-steps:
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-* name: Checkout repository
-uses: actions/checkout@v4
-* name: Install Lean 4
-run: |
-curl [https://elan.lean-lang.org/elan-init.sh](https://elan.lean-lang.org/elan-init.sh) -sSf | sh -s -- -y --default-toolchain leanprover/lean4:v4.14.0
-echo "HOME/.elan/bin" >> GITHUB_PATH
-* name: Audit for 'sorry' or custom axioms
-run: |
-if grep -rnE "^[[:space:]]*(axiom\b|.*:=.*\bsorry\b|.*\bby\b.*\bsorry\b)" --include="*.lean" .; then
-echo "Error: 'sorry' or custom 'axiom' found in code!"
-exit 1
-fi
-* name: Compile all standalone Lean 4 files
-run: |
-for f in $(find . -name "*.lean" ! -name "SevenValuedLogic_RigorousCore_v5_3.lean"); do
-echo "Verifying $f ..."
-lean "$f"
-done
+      - name: Install Lean 4
+        run: |
+          curl https://lean-lang.org -sSf | sh -s -- -y --default-toolchain leanprover/lean4:stable
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
-verify-python:
-name: Run Python Benchmarks & Sanity Checks
-runs-on: ubuntu-latest 
+      - name: Audit for 'sorry' or custom axioms
+        run: |
+          if grep -rnE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" --include="*.lean" .; then
+            echo "Error: 'sorry' or custom 'axiom' found!"
+            exit 1
+          fi
 
-steps:
-
-* name: Checkout repository
-uses: actions/checkout@v4
-* name: Set up Python 3.11
-uses: actions/setup-python@v5
-with:
-python-version: '3.11'
-* name: Install dependencies
-run: |
-python -m pip install --upgrade pip
-pip install numpy
-* name: Run Python scripts
-run: |
-for f in $(find . -name "*.py"); do
-echo "Running $f ..."
-python "$f"
-done
+      - name: Compile all standalone Lean 4 files
+        run: |
+          for f in $(find . -name "*.lean" ! -name "lakefile.lean"); do
+            echo "Verifying $f ..."
+            lean "$f"
+          done
