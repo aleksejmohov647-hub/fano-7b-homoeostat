@@ -32,6 +32,8 @@ jobs:
             exit 1
           fi
 
+          echo "### Verified Lean 4 Files" >> $GITHUB_STEP_SUMMARY
+          COUNT=0
           for file in $FILES; do
             echo "Checking $file..."
             if grep -nE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" "$file"; then
@@ -39,4 +41,10 @@ jobs:
               exit 1
             fi
             lean "$file"
+            echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
+            COUNT=$((COUNT + 1))
           done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total verified:** $COUNT file(s) with zero \`sorry\` or custom \`axiom\`." >> $GITHUB_STEP_SUMMARY
+          echo "Successfully verified $COUNT Lean 4 file(s) with zero sorry/axioms."
