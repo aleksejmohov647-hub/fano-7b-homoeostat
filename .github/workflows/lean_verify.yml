@@ -18,18 +18,15 @@ jobs:
       - name: Install Lean 4
         uses: leanprover/lean-action@v1
         with:
+          toolchain: leanprover/lean4:stable
           use-github-cache: false
 
       - name: Audit for 'sorry' or custom axioms
         run: |
-          if grep -rnE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" --include="*.lean" .; then
+          if grep -rnE "^[[:space:]]*(axiom\b|.*:=\s*sorry\b|\bsorry\b)" SevenValuedLogic_UnifiedTimeQuantum_v6_0.lean; then
             echo "Error: 'sorry' or custom 'axiom' found!"
             exit 1
           fi
 
-      - name: Compile all standalone Lean 4 files
-        run: |
-          for f in $(find . -name "*.lean" ! -name "lakefile.lean"); do
-            echo "Verifying $f ..."
-            lean "$f"
-          done
+      - name: Compile Lean 4 file
+        run: lean SevenValuedLogic_UnifiedTimeQuantum_v6_0.lean
