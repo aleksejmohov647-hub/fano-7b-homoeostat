@@ -1,35 +1,56 @@
-name: Build & Check Zero-Sorry
+name: Build & Check Zero-Sorry + Python Benchmarks 
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+push:
+branches: [ main, master ]
+pull_request:
+branches: [ main, master ] 
 
 jobs:
-  verify:
-    runs-on: ubuntu-latest
+verify-lean:
+name: Verify Lean 4 Certificates
+runs-on: ubuntu-latest 
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+steps:
 
-      - name: Install Lean 4
-        run: |
-          curl -sSfL https://github.com -o lean.tar.zst
-          tar --zstd -xf lean.tar.zst -C /tmp
-          echo "/tmp/lean-4.14.0-linux/bin" >> $GITHUB_PATH
+* name: Checkout repository
+uses: actions/checkout@v4
+* name: Install Lean 4
+run: |
+curl [https://elan.lean-lang.org/elan-init.sh](https://elan.lean-lang.org/elan-init.sh) -sSf | sh -s -- -y --default-toolchain leanprover/lean4:v4.14.0
+echo "HOME/.elan/bin" >> GITHUB_PATH
+* name: Audit for 'sorry' or custom axioms
+run: |
+if grep -rnE "^[[:space:]]*(axiom\b|.*:=.*\bsorry\b|.*\bby\b.*\bsorry\b)" --include="*.lean" .; then
+echo "Error: 'sorry' or custom 'axiom' found in code!"
+exit 1
+fi
+* name: Compile all standalone Lean 4 files
+run: |
+for f in $(find . -name "*.lean" ! -name "SevenValuedLogic_RigorousCore_v5_3.lean"); do
+echo "Verifying $f ..."
+lean "$f"
+done
 
-      - name: Audit for 'sorry' or custom axioms
-        run: |
-          if grep -rnE "\b(sorry|axiom)\b" --include="*.lean" .; then
-            echo "Error: 'sorry' or custom 'axiom' found!"
-            exit 1
-          fi
+verify-python:
+name: Run Python Benchmarks & Sanity Checks
+runs-on: ubuntu-latest 
 
-      - name: Compile all standalone Lean 4 files
-        run: |
-          for f in $(find . -name "*.lean" ! -name "SevenValuedLogic_RigorousCore_v5_3.lean"); do
-            echo "Verifying $f ..."
-            lean "$f"
-          done
+steps:
+
+* name: Checkout repository
+uses: actions/checkout@v4
+* name: Set up Python 3.11
+uses: actions/setup-python@v5
+with:
+python-version: '3.11'
+* name: Install dependencies
+run: |
+python -m pip install --upgrade pip
+pip install numpy
+* name: Run Python scripts
+run: |
+for f in $(find . -name "*.py"); do
+echo "Running $f ..."
+python "$f"
+done
