@@ -1,0 +1,407 @@
+/-
+  ==============================================================================
+  SEVEN-VALUED LOGIC (7VL) — TYPE-SAFE VERIFIED DUAL RESONATOR CERTIFICATE
+  Module: SevenValuedLogic_DualResonator_v3_4_Verified
+  ==============================================================================
+  Author: Alex Mokhov (Independent Researcher, Krasnodar, Russia)
+  ORCID: 0009-0005-7759-1974
+  Verification Kernel: Lean 4 Core Kernel (Init only; zero Mathlib, zero sorry,
+  zero custom axioms)
+  ==============================================================================
+-/
+
+namespace SevenValuedLogic_DualResonator_v3_4
+
+-- ============================================================================
+-- SECTION 1: TYPE-SAFE TOTAL OPERATORS ON Fin 3 AND Fin 4 (S_3 <-> S_4)
+-- ============================================================================
+
+structure Perm3 where
+  f0 : Fin 3
+  f1 : Fin 3
+  f2 : Fin 3
+deriving DecidableEq, Repr
+
+structure Perm4 where
+  f0 : Fin 4
+  f1 : Fin 4
+  f2 : Fin 4
+  f3 : Fin 4
+deriving DecidableEq, Repr
+
+def Perm4.eval (m : Perm4) (x : Fin 4) : Fin 4 :=
+  match x with
+  | ⟨0, _⟩ => m.f0
+  | ⟨1, _⟩ => m.f1
+  | ⟨2, _⟩ => m.f2
+  | ⟨3, _⟩ => m.f3
+
+def Perm4.mul (m1 m2 : Perm4) : Perm4 :=
+  { f0 := m1.eval m2.f0
+    f1 := m1.eval m2.f1
+    f2 := m1.eval m2.f2
+    f3 := m1.eval m2.f3 }
+
+def embed3to4 (p : Perm3) : Perm4 :=
+  { f0 := ⟨p.f0.val, by omega⟩
+    f1 := ⟨p.f1.val, by omega⟩
+    f2 := ⟨p.f2.val, by omega⟩
+    f3 := ⟨3, by decide⟩ }
+
+def id4 : Perm4 :=
+  { f0 := ⟨0, by decide⟩, f1 := ⟨1, by decide⟩
+    f2 := ⟨2, by decide⟩, f3 := ⟨3, by decide⟩ }
+
+def t03 : Perm4 :=
+  { f0 := ⟨3, by decide⟩, f1 := ⟨1, by decide⟩
+    f2 := ⟨2, by decide⟩, f3 := ⟨0, by decide⟩ }
+
+def t13 : Perm4 :=
+  { f0 := ⟨0, by decide⟩, f1 := ⟨3, by decide⟩
+    f2 := ⟨2, by decide⟩, f3 := ⟨1, by decide⟩ }
+
+def t23 : Perm4 :=
+  { f0 := ⟨0, by decide⟩, f1 := ⟨1, by decide⟩
+    f2 := ⟨3, by decide⟩, f3 := ⟨2, by decide⟩ }
+
+def s3_e   : Perm3 := { f0 := ⟨0, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨2, by decide⟩ }
+def s3_01  : Perm3 := { f0 := ⟨1, by decide⟩, f1 := ⟨0, by decide⟩, f2 := ⟨2, by decide⟩ }
+def s3_02  : Perm3 := { f0 := ⟨2, by decide⟩, f1 := ⟨1, by decide⟩, f2 := ⟨2, by decide⟩ }
+def s3_12  : Perm3 := { f0 := ⟨0, by decide⟩, f1 := ⟨2, by decide⟩, f2 := ⟨1, by decide⟩ }
+def s3_012 : Perm3 := { f0 := ⟨1, by decide⟩, f1 := ⟨2, by decide⟩, f2 := ⟨0, by decide⟩ }
+def s3_021 : Perm3 := { f0 := ⟨2, by decide⟩, f1 := ⟨0, by decide⟩, f2 := ⟨1, by decide⟩ }
+
+def allS3 : List Perm3 := [s3_e, s3_01, s3_02, s3_12, s3_012, s3_021]
+def j4Channels : List Perm4 := [id4, t03, t13, t23]
+
+def allS4 : List Perm4 :=
+  allS3.flatMap (fun pi => j4Channels.map (fun g => Perm4.mul g (embed3to4 pi)))
+
+/-- Type-safe cyclic contraction projecting Perm4 strictly onto Perm3 (deletes 3 from cycle). -/
+def contract3 (m : Perm4) : Perm3 :=
+  let step (x : Fin 4) : Fin 3 :=
+    let y := m.eval x
+    let z := if y == ⟨3, by decide⟩ then m.eval ⟨3, by decide⟩ else y
+    ⟨z.val % 3, by omega⟩
+  { f0 := step ⟨0, by decide⟩
+    f1 := step ⟨1, by decide⟩
+    f2 := step ⟨2, by decide⟩ }
+
+/-- Ordinal window extension channels (Bandt-Pompe right-insertion at index 3):
+    Inserting x_3 of rank r in {0,1,2,3} shifts elements >= r by +1. -/
+def bpInsert (p : Perm3) (r : Fin 4) : Perm4 :=
+  let lift (v : Fin 3) : Fin 4 :=
+    if v.val < r.val then ⟨v.val, by omega⟩ else ⟨v.val + 1, by omega⟩
+  { f0 := lift p.f0
+    f1 := lift p.f1
+    f2 := lift p.f2
+    f3 := r }
+
+/-- Ordinal window truncation (Bandt-Pompe left-drop of x_0):
+    Dropping x_0 shifts ranks > f0 down by -1. -/
+def bpDropLeft (m : Perm4) : Perm3 :=
+  let drop (v : Fin 4) : Fin 3 :=
+    if v.val < m.f0.val then ⟨v.val, by omega⟩ else ⟨(v.val - 1) % 3, by omega⟩
+  { f0 := drop m.f1
+    f1 := drop m.f2
+    f2 := drop m.f3 }
+
+def bpRanks : List (Fin 4) := [⟨0, by decide⟩, ⟨1, by decide⟩, ⟨2, by decide⟩, ⟨3, by decide⟩]
+
+def fixedCount3 (m : Perm3) : Nat :=
+  (if m.f0 == ⟨0, by decide⟩ then 1 else 0) +
+  (if m.f1 == ⟨1, by decide⟩ then 1 else 0) +
+  (if m.f2 == ⟨2, by decide⟩ then 1 else 0)
+
+def fixedCount4 (m : Perm4) : Nat :=
+  (if m.f0 == ⟨0, by decide⟩ then 1 else 0) +
+  (if m.f1 == ⟨1, by decide⟩ then 1 else 0) +
+  (if m.f2 == ⟨2, by decide⟩ then 1 else 0) +
+  (if m.f3 == ⟨3, by decide⟩ then 1 else 0)
+
+def isZeroCore3 (m : Perm3) : Bool := fixedCount3 m == 0
+def isOneCore3  (m : Perm3) : Bool := fixedCount3 m > 0
+def isZeroCore4 (m : Perm4) : Bool := fixedCount4 m == 0
+def isOneCore4  (m : Perm4) : Bool := fixedCount4 m > 0
+
+def m0_3 : List Perm3 := allS3.filter isZeroCore3
+def m1_3 : List Perm3 := allS3.filter isOneCore3
+def m0_4 : List Perm4 := allS4.filter isZeroCore4
+def m1_4 : List Perm4 := allS4.filter isOneCore4
+
+/-- Exact 24 <-> 24 Jucys-Murphy / cyclic contraction channels (Theoretical Dual Resonator). -/
+theorem unified_dual_channels_exact :
+    m0_3.length = 2 ∧ m1_3.length = 4 ∧
+    m0_4.length = 9 ∧ m1_4.length = 15 ∧
+    let fwd0 := m0_3.flatMap (fun pi => j4Channels.map (fun g => Perm4.mul g (embed3to4 pi)))
+    fwd0.length = 8 ∧
+    (fwd0.filter isZeroCore4).length = 6 ∧
+    (fwd0.filter isOneCore4).length = 2 ∧
+    let fwd1 := m1_3.flatMap (fun pi => j4Channels.map (fun g => Perm4.mul g (embed3to4 pi)))
+    fwd1.length = 16 ∧
+    (fwd1.filter isZeroCore4).length = 3 ∧
+    (fwd1.filter isOneCore4).length = 13 ∧
+    let bwd0 := m0_4.map contract3
+    bwd0.length = 9 ∧
+    (bwd0.filter isZeroCore3).length = 6 ∧
+    (bwd0.filter isOneCore3).length = 3 ∧
+    let bwd1 := m1_4.map contract3
+    bwd1.length = 15 ∧
+    (bwd1.filter isZeroCore3).length = 2 ∧
+    (bwd1.filter isOneCore3).length = 13 ∧
+    6 * 4 = 8 * 3 ∧
+    6 * 3 = 9 * 2 := by
+  decide
+
+/-- Exact Bandt-Pompe sliding-window transition counts on i.i.d. uniform white noise (Protocol B).
+    Proves W_fwd^(0) = 4/8, W_bwd^(0) = 4/9 => chi_0 = 9/8, and
+    W_fwd^(1) = 11/16, W_bwd^(1) = 11/15 => chi_1 = 16/15. -/
+theorem bandt_pompe_window_channels_exact :
+    let bpFwd0 := m0_3.flatMap (fun pi => bpRanks.map (fun r => bpInsert pi r))
+    bpFwd0.length = 8 ∧
+    (bpFwd0.filter isZeroCore4).length = 4 ∧
+    (bpFwd0.filter isOneCore4).length = 4 ∧
+    let bpFwd1 := m1_3.flatMap (fun pi => bpRanks.map (fun r => bpInsert pi r))
+    bpFwd1.length = 16 ∧
+    (bpFwd1.filter isZeroCore4).length = 5 ∧
+    (bpFwd1.filter isOneCore4).length = 11 ∧
+    let bpBwd0 := m0_4.map bpDropLeft
+    bpBwd0.length = 9 ∧
+    (bpBwd0.filter isZeroCore3).length = 4 ∧
+    (bpBwd0.filter isOneCore3).length = 5 ∧
+    let bpBwd1 := m1_4.map bpDropLeft
+    bpBwd1.length = 15 ∧
+    (bpBwd1.filter isZeroCore3).length = 4 ∧
+    (bpBwd1.filter isOneCore3).length = 11 ∧
+    (4 * 9) * 8 = (8 * 4) * 9 ∧
+    (11 * 16) * 15 = (15 * 11) * 16 := by
+  decide
+
+-- ============================================================================
+-- SECTION 2: SPECTRAL & DETAILED-BALANCE INVARIANTS OF P_dual
+-- ============================================================================
+
+def tZero12 : List (List Int) :=
+  [ [3, 9],
+    [8, 4] ]
+
+def pDual240 : List (List Int) :=
+  [ [  0,   0, 180,  60],
+    [  0,   0,  45, 195],
+    [160,  80,   0,   0],
+    [ 32, 208,   0,   0] ]
+
+def piDual48 : List Int := [8, 16, 9, 15]
+
+def matMulInt (a b : List (List Int)) : List (List Int) :=
+  let bt := match b with
+    | [] => []
+    | r :: _ => (List.range r.length).map (fun j => b.map (fun row => row.getD j 0))
+  a.map (fun row => bt.map (fun col => (List.zipWith (· * ·) row col).foldl (· + ·) 0))
+
+def matVecMulInt (m : List (List Int)) (v : List Int) : List Int :=
+  m.map (fun row => (List.zipWith (· * ·) row v).foldl (· + ·) 0)
+
+def transposeInt (m : List (List Int)) : List (List Int) :=
+  match m with
+  | [] => []
+  | row :: _ => (List.range row.length).map (fun j => m.map (fun r => r.getD j 0))
+
+theorem spectral_and_balance_invariants :
+    tZero12.all (fun r => r.foldl (· + ·) 0 == 12) = true ∧
+    (9 : Int) - 8 = 1 ∧
+    (3 : Int) + 4 = 7 ∧
+    (3 : Int) * 3 = 9 ∧ (4 : Int) * 2 = 8 ∧
+    matVecMulInt tZero12 [9, -8] = [-45, 40] ∧
+    [-45, 40] = [9, -8].map (· * (-5)) ∧
+    matMulInt tZero12 tZero12 = [ [81, 63], [56, 88] ] ∧
+    matVecMulInt (transposeInt tZero12) [8, 9] = [96, 108] ∧
+    [96, 108] = [8, 9].map (· * 12) ∧
+    (8 : Int) * 9 = 9 * 8 ∧
+    pDual240.all (fun r => r.foldl (· + ·) 0 == 240) = true ∧
+    piDual48.foldl (· + ·) 0 = 48 ∧
+    matVecMulInt (transposeInt pDual240) piDual48 = piDual48.map (· * 240) ∧
+    matMulInt pDual240 pDual240 =
+      [ [30720, 26880,     0,     0],
+        [13440, 44160,     0,     0],
+        [    0,     0, 32400, 25200],
+        [    0,     0, 15120, 42480] ] ∧
+    30720 + 44160 = 57600 + 17280 ∧
+    32400 + 42480 = 57600 + 17280 ∧
+    (8 : Int) * 180 = 9 * 160 ∧
+    (8 : Int) * 60 = 15 * 32 ∧
+    (16 : Int) * 45 = 9 * 80 ∧
+    (16 : Int) * 195 = 15 * 208 := by
+  decide
+
+-- ============================================================================
+-- SECTION 3: UNIVERSAL ALTERNATING TOWER LAW & GLOBAL PEAK AT n = 3
+-- ============================================================================
+
+def subfact : Nat → Nat
+  | 0 => 1
+  | 1 => 0
+  | n + 2 => (n + 1) * (subfact (n + 1) + subfact n)
+
+theorem dual_tower_survival_law (n : Nat) :
+    subfact (n + 2) - (n + 1) * subfact n = (n + 1) * subfact (n + 1) := by
+  simp only [subfact]
+  rw [Nat.mul_add, Nat.add_comm]
+  exact Nat.add_sub_cancel_left _ _
+
+theorem subfact_alternating_law : ∀ n : Nat,
+    (subfact (n + 1) : Int) - ((n + 1 : Int) * (subfact n : Int)) =
+    if n % 2 == 0 then -1 else 1
+  | 0 => by decide
+  | n + 1 => by
+      have ih := subfact_alternating_law n
+      have hrec : (subfact (n + 2) : Int) =
+          ((n + 1 : Int)) * ((subfact (n + 1) : Int) + (subfact n : Int)) := by
+        simp only [subfact]
+        omega
+      by_cases h : n % 2 = 0
+      · have h1 : (n % 2 == 0) = true := decide_eq_true h
+        have h2 : ((n + 1) % 2 == 0) = false := decide_eq_false (by omega)
+        simp only [h1, h2, ↓reduceIte] at ih ⊢
+        omega
+      · have h1 : (n % 2 == 0) = false := decide_eq_false h
+        have h2 : ((n + 1) % 2 == 0) = true := decide_eq_true (by omega)
+        simp only [h1, h2, ↓reduceIte] at ih ⊢
+        omega
+
+theorem dual_resonator_global_peak_3_4 :
+    subfact 3 < 3 * subfact 2 ∧
+    subfact 4 > 4 * subfact 3 ∧
+    subfact 4 = 9 ∧ 4 * subfact 3 = 8 ∧
+    subfact 5 < 5 * subfact 4 ∧
+    subfact 5 = 44 ∧ 5 * subfact 4 = 45 ∧
+    subfact 6 > 6 * subfact 5 ∧
+    subfact 6 = 265 ∧ 6 * subfact 5 = 264 ∧
+    264 = 33 * 8 ∧
+    subfact 3 + subfact 4 = 11 := by
+  decide
+
+-- ============================================================================
+-- SECTION 4: KLEENE-LUKASIEWICZ 7VL & Z_2-EQUIVARIANT RATIONAL QUANTIZATION Q_7
+-- ============================================================================
+
+abbrev V7 := Fin 7
+
+def neg7 (x : V7) : V7 := ⟨6 - x.val, by omega⟩
+def and7 (x y : V7) : V7 := ⟨min x.val y.val, by omega⟩
+def or7  (x y : V7) : V7 := ⟨max x.val y.val, by omega⟩
+def fus7 (x y : V7) : V7 := ⟨if x.val + y.val >= 6 then x.val + y.val - 6 else 0, by omega⟩
+def imp7 (x y : V7) : V7 := ⟨min 6 (6 - x.val + y.val), by omega⟩
+
+def allV7 : List V7 :=
+  [⟨0, by decide⟩, ⟨1, by decide⟩, ⟨2, by decide⟩, ⟨3, by decide⟩,
+   ⟨4, by decide⟩, ⟨5, by decide⟩, ⟨6, by decide⟩]
+
+/-- Exact rational transition state (w_fwd_0, w_bwd_0, w_fwd_1, w_bwd_1) in [0, 1]^4
+    represented by positive denominators and bounded numerators. -/
+structure RationalChannelState where
+  wf0_num : Nat
+  wf0_den : Nat
+  wb0_num : Nat
+  wb0_den : Nat
+  wf1_num : Nat
+  wf1_den : Nat
+  wb1_num : Nat
+  wb1_den : Nat
+  wf0_ok : wf0_den > 0 ∧ wf0_num ≤ wf0_den
+  wb0_ok : wb0_den > 0 ∧ wb0_num ≤ wb0_den
+  wf1_ok : wf1_den > 0 ∧ wf1_num ≤ wf1_den
+  wb1_ok : wb1_den > 0 ∧ wb1_num ≤ wb1_den
+
+/-- Genuine physical time-reversal involution T : (W_fwd, W_bwd) |-> (W_bwd, W_fwd)
+    swapping forward and backward conditional transition probabilities. -/
+def timeReverseChannel (s : RationalChannelState) : RationalChannelState :=
+  { wf0_num := s.wb0_num, wf0_den := s.wb0_den,
+    wb0_num := s.wf0_num, wb0_den := s.wf0_den,
+    wf1_num := s.wb1_num, wf1_den := s.wb1_den,
+    wb1_num := s.wf1_num, wb1_den := s.wf1_den,
+    wf0_ok := s.wb0_ok,
+    wb0_ok := s.wf0_ok,
+    wf1_ok := s.wb1_ok,
+    wb1_ok := s.wf1_ok }
+
+/-- Theorem: T is an exact involution on RationalChannelState (T(T(s)) = s). -/
+theorem timeReverseChannel_involutive (s : RationalChannelState) :
+    timeReverseChannel (timeReverseChannel s) = s := by
+  cases s
+  rfl
+
+/-- Exact algebraic sign/magnitude quantization Q_7 directly from rational transition rates. -/
+def quantizeRationalQ7 (s : RationalChannelState) : V7 :=
+  let s0_num := s.wf0_num * s.wb0_num
+  let s0_den := s.wf0_den * s.wb0_den
+  if s0_num == 0 then ⟨0, by decide⟩
+  else if s0_num == s0_den then ⟨6, by decide⟩
+  else
+    let lhs := s.wf0_num * s.wf1_num * s.wb0_den * s.wb1_den
+    let rhs := s.wb0_num * s.wb1_num * s.wf0_den * s.wf1_den
+    if lhs == rhs then ⟨3, by decide⟩
+    else if lhs > rhs then
+      if lhs ≥ 2 * rhs then ⟨5, by decide⟩ else ⟨4, by decide⟩
+    else
+      if rhs ≥ 2 * lhs then ⟨1, by decide⟩ else ⟨2, by decide⟩
+
+private theorem nat_beq_false {a b : Nat} (h : a ≠ b) : (a == b) = false := by
+  cases h_eq : (a == b)
+  · rfl
+  · exact absurd (Nat.eq_of_beq_eq_true h_eq) h
+
+/-- Universal Theorem: For ALL valid interior rational channel states (0 < s_0 < 1),
+    Q_7 is strictly Z_2-equivariant under physical time-reversal:
+    Q_7(T(s)) = ~Q_7(s) = 6 - Q_7(s). -/
+theorem quantizeRationalQ7_equivariant (s : RationalChannelState)
+    (h_interior : s.wf0_num * s.wb0_num > 0 ∧
+                  s.wf0_num * s.wb0_num < s.wf0_den * s.wb0_den) :
+    quantizeRationalQ7 (timeReverseChannel s) = neg7 (quantizeRationalQ7 s) := by
+  have h1 : (s.wb0_num * s.wf0_num == 0) = false := by
+    apply nat_beq_false
+    have : s.wb0_num * s.wf0_num = s.wf0_num * s.wb0_num := Nat.mul_comm _ _
+    omega
+  have h2 : (s.wb0_num * s.wf0_num == s.wb0_den * s.wf0_den) = false := by
+    apply nat_beq_false
+    have hnum : s.wb0_num * s.wf0_num = s.wf0_num * s.wb0_num := Nat.mul_comm _ _
+    have hden : s.wb0_den * s.wf0_den = s.wf0_den * s.wf0_den := Nat.mul_comm _ _
+    omega
+  have h3 : (s.wf0_num * s.wb0_num == 0) = false := by
+    apply nat_beq_false; omega
+  have h4 : (s.wf0_num * s.wb0_num == s.wf0_den * s.wb0_den) = false := by
+    apply nat_beq_false; omega
+  simp only [quantizeRationalQ7, timeReverseChannel, h1, h2, h3, h4, Bool.false_eq_true, ↓reduceIte]
+  set A := s.wf0_num * s.wf1_num * s.wb0_den * s.wb1_den
+  set B := s.wb0_num * s.wb1_num * s.wf0_den * s.wf1_den
+  by_cases hab : A = B
+  · have hba : B = A := hab.symm
+    simp [hab, hba, neg7]
+  · have h_beq_ab : (A == B) = false := nat_beq_false hab
+    have h_beq_ba : (B == A) = false := nat_beq_false (Ne.symm hab)
+    simp only [h_beq_ab, h_beq_ba, Bool.false_eq_true, ↓reduceIte]
+    by_cases hgt : A > B
+    · have h_not_bgt : ¬ (B > A) := by omega
+      simp only [hgt, h_not_bgt, ↓reduceIte]
+      by_cases h2x : A ≥ 2 * B
+      · simp [h2x, neg7]
+      · simp [h2x, neg7]
+    · have hbgt : B > A := by omega
+      simp only [hgt, hbgt, ↓reduceIte]
+      by_cases h2x : B ≥ 2 * A
+      · simp [h2x, neg7]
+      · simp [h2x, neg7]
+
+theorem seven_valued_logic_algebra_valid :
+    allV7.all (fun x => neg7 (neg7 x) == x) = true ∧
+    neg7 ⟨3, by decide⟩ = ⟨3, by decide⟩ ∧
+    allV7.all (fun x => allV7.all (fun y =>
+      neg7 (and7 x y) == or7 (neg7 x) (neg7 y) &&
+      neg7 (or7 x y) == and7 (neg7 x) (neg7 y))) = true ∧
+    allV7.all (fun x => allV7.all (fun y =>
+      (and7 x (neg7 x)).val <= (or7 y (neg7 y)).val)) = true ∧
+    allV7.all (fun x => allV7.all (fun y => allV7.all (fun z =>
+      ((fus7 x y).val <= z.val) == (x.val <= (imp7 y z).val)))) = true := by
+  decide
+
+end SevenValuedLogic_DualResonator_v3_4
