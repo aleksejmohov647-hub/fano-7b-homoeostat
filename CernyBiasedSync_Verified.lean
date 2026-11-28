@@ -66,7 +66,7 @@ def actA (n mask : Nat) : Nat :=
   low ||| high
 
 def actB (mask : Nat) : Nat :=
-  let without0 := mask &&& (~~~1)
+  let without0 := (mask >>> 1) <<< 1
   if (mask &&& 1) == 1 then without0 ||| 2 else without0
 
 def popcount : Nat → Nat
