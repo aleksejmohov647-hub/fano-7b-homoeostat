@@ -3,20 +3,16 @@
   Standalone Lean 4 Verification (Core `Init` only, zero external axioms, zero `sorry`)
 -/
 
-set_option maxHeartbeats 2000000
-
 namespace CernyBiasedSync
 
 macro "poly_solve" : tactic =>
   `(tactic| (
+    simp only [Int.sub_eq_add_neg, Int.add_mul, Int.mul_add, Int.neg_mul, Int.mul_neg,
+               Int.neg_add, Int.neg_neg, Int.mul_one, Int.one_mul,
+               Int.mul_assoc, Int.add_assoc, Int.add_left_comm, Int.add_comm,
+               Int.mul_left_comm, Int.mul_comm]
+    try omega
     try grind
-    try (
-      simp only [Int.sub_eq_add_neg, Int.add_mul, Int.mul_add, Int.neg_mul, Int.mul_neg,
-                 Int.neg_add, Int.neg_neg, Int.mul_one, Int.one_mul,
-                 Int.mul_assoc, Int.add_assoc, Int.add_left_comm, Int.add_comm,
-                 Int.mul_left_comm, Int.mul_comm]
-      omega
-    )
   ))
 
 -- ============================================================================
@@ -116,19 +112,18 @@ theorem bellman_C3_all_transient (u v : Int) :
 -- ============================================================================
 
 def phiC4 (u v : Int) (mask : Nat) : Int :=
-  let w := v - u
   match mask with
-  | 3  => 6 * u * u + 6 * u * w + 6 * w * w
-  | 9  => 6 * u * u + 12 * u * w + 6 * w * w
-  | 12 => 6 * u * u + 12 * u * w + 12 * w * w
-  | 6  => 6 * u * u + 6 * u * w + 12 * w * w
-  | 5  => 6 * u * u + 12 * u * w + 12 * w * w
-  | 10 => 6 * u * u + 6 * u * w + 18 * w * w
-  | 7  => 12 * u * u + 12 * u * w + 18 * w * w
-  | 11 => 12 * u * u + 12 * u * w + 18 * w * w
-  | 13 => 12 * u * u + 18 * u * w + 18 * w * w
-  | 14 => 12 * u * u + 12 * u * w + 24 * w * w
-  | 15 => 18 * u * u + 18 * u * w + 24 * w * w
+  | 3  => 6 * u * u + 6 * u * (v - u) + 6 * (v - u) * (v - u)
+  | 9  => 6 * u * u + 12 * u * (v - u) + 6 * (v - u) * (v - u)
+  | 12 => 6 * u * u + 12 * u * (v - u) + 12 * (v - u) * (v - u)
+  | 6  => 6 * u * u + 6 * u * (v - u) + 12 * (v - u) * (v - u)
+  | 5  => 6 * u * u + 12 * u * (v - u) + 12 * (v - u) * (v - u)
+  | 10 => 6 * u * u + 6 * u * (v - u) + 18 * (v - u) * (v - u)
+  | 7  => 12 * u * u + 12 * u * (v - u) + 18 * (v - u) * (v - u)
+  | 11 => 12 * u * u + 12 * u * (v - u) + 18 * (v - u) * (v - u)
+  | 13 => 12 * u * u + 18 * u * (v - u) + 18 * (v - u) * (v - u)
+  | 14 => 12 * u * u + 12 * u * (v - u) + 24 * (v - u) * (v - u)
+  | 15 => 18 * u * u + 18 * u * (v - u) + 24 * (v - u) * (v - u)
   | _  => 0
 
 theorem phiC4_matches_cernyNum4 (u v : Int) :
@@ -136,14 +131,49 @@ theorem phiC4_matches_cernyNum4 (u v : Int) :
   dsimp [phiC4, cernyNum]
   poly_solve
 
-theorem bellman_C4_step (u v : Int) (m mA mB : Nat)
-    (hA : actA 4 m = mA) (hB : actB m = mB)
-    (hEq : u * phiC4 u v mA + (v - u) * phiC4 u v mB =
-           v * phiC4 u v m - 6 * u * u * (v - u)) :
-    u * phiC4 u v (actA 4 m) + (v - u) * phiC4 u v (actB m) =
-      v * phiC4 u v m - 6 * u * u * (v - u) := by
-  rw [hA, hB]
-  exact hEq
+theorem bellman_C4_m3 (u v : Int) :
+    u * phiC4 u v (actA 4 3) + (v - u) * phiC4 u v (actB 3) = v * phiC4 u v 3 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m5 (u v : Int) :
+    u * phiC4 u v (actA 4 5) + (v - u) * phiC4 u v (actB 5) = v * phiC4 u v 5 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m6 (u v : Int) :
+    u * phiC4 u v (actA 4 6) + (v - u) * phiC4 u v (actB 6) = v * phiC4 u v 6 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m7 (u v : Int) :
+    u * phiC4 u v (actA 4 7) + (v - u) * phiC4 u v (actB 7) = v * phiC4 u v 7 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m9 (u v : Int) :
+    u * phiC4 u v (actA 4 9) + (v - u) * phiC4 u v (actB 9) = v * phiC4 u v 9 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m10 (u v : Int) :
+    u * phiC4 u v (actA 4 10) + (v - u) * phiC4 u v (actB 10) = v * phiC4 u v 10 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m11 (u v : Int) :
+    u * phiC4 u v (actA 4 11) + (v - u) * phiC4 u v (actB 11) = v * phiC4 u v 11 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m12 (u v : Int) :
+    u * phiC4 u v (actA 4 12) + (v - u) * phiC4 u v (actB 12) = v * phiC4 u v 12 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m13 (u v : Int) :
+    u * phiC4 u v (actA 4 13) + (v - u) * phiC4 u v (actB 13) = v * phiC4 u v 13 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m14 (u v : Int) :
+    u * phiC4 u v (actA 4 14) + (v - u) * phiC4 u v (actB 14) = v * phiC4 u v 14 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
+
+theorem bellman_C4_m15 (u v : Int) :
+    u * phiC4 u v (actA 4 15) + (v - u) * phiC4 u v (actB 15) = v * phiC4 u v 15 - 6 * u * u * (v - u) := by
+  dsimp [phiC4, actA, actB]; poly_solve
 
 def transientC4 : List Nat := 3 :: 5 :: 6 :: 7 :: 9 :: 10 :: 11 :: 12 :: 13 :: 14 :: 15 :: []
 
@@ -155,16 +185,16 @@ theorem bellman_C4_all_transient (u v : Int) :
   dsimp [transientC4] at hmem
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hmem
   rcases hmem with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  · exact bellman_C4_step u v 3 6 3 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 5 10 6 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 6 12 6 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 7 14 6 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 9 3 10 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 10 6 10 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 11 7 10 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 12 9 12 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 13 11 14 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 14 13 14 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
-  · exact bellman_C4_step u v 15 15 14 (by decide) (by decide) (by dsimp [phiC4]; poly_solve)
+  · exact bellman_C4_m3 u v
+  · exact bellman_C4_m5 u v
+  · exact bellman_C4_m6 u v
+  · exact bellman_C4_m7 u v
+  · exact bellman_C4_m9 u v
+  · exact bellman_C4_m10 u v
+  · exact bellman_C4_m11 u v
+  · exact bellman_C4_m12 u v
+  · exact bellman_C4_m13 u v
+  · exact bellman_C4_m14 u v
+  · exact bellman_C4_m15 u v
 
 end CernyBiasedSync
