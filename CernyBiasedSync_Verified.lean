@@ -7,12 +7,13 @@ namespace CernyBiasedSync
 
 macro "poly_solve" : tactic =>
   `(tactic| (
-    simp only [Int.sub_eq_add_neg, Int.add_mul, Int.mul_add, Int.neg_mul, Int.mul_neg,
-               Int.neg_add, Int.neg_neg, Int.mul_one, Int.one_mul,
-               Int.mul_assoc, Int.add_assoc, Int.add_left_comm, Int.add_comm,
-               Int.mul_left_comm, Int.mul_comm]
-    try omega
-    try grind
+    first
+    | grind
+    | (simp only [Int.sub_eq_add_neg, Int.add_mul, Int.mul_add, Int.neg_mul, Int.mul_neg,
+                  Int.neg_add, Int.neg_neg, Int.mul_one, Int.one_mul,
+                  Int.mul_assoc, Int.add_assoc, Int.add_left_comm, Int.add_comm,
+                  Int.mul_left_comm, Int.mul_comm]
+       omega)
   ))
 
 -- ============================================================================
